@@ -627,6 +627,7 @@ export const catalogos_servicos = [
     "url_metadados": "https://metadados.inde.gov.br/geonetwork",
     "cswGetCapabilities": "https://metadados.inde.gov.br/geonetwork/srv/por/csw?service=CSW&version=2.0.2&request=GetCapabilities"
     },
+    
     {
         "descricao": "MTUR - Ministério do Turismo",
         "sigla": "MTUR",
@@ -649,7 +650,27 @@ export const catalogos_servicos = [
         "wmsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/PGGM/ows?service=wms&request=GetCapabilities&version=1.3.0",
         "wfsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/PGGM/ows?service=wfs&request=GetCapabilities&version=1.3.0",
         "wcsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/PGGM/ows?service=wcs&request=GetCapabilities&version=1.3.0"
+    },
+    {
+        "descricao": "Prefeitura do Município de São Paulo (SP) - vetor",
+        "url": "http://wms.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wms ",
+        "wmsAvailable": true,
+        "wfsAvailable": false,
+        "wcsAvailable": false,
+        "wmsGetCapabilities": "http://wms.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wms ?service=wms&request=GetCapabilities&version=1.3.0",
+        "wfsGetCapabilities": null,
+        "wcsGetCapabilities": null
         },
+    {
+        "descricao": "Prefeitura do Município de São Paulo (SP) - raster",
+        "url": "http://raster.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/ows",
+        "wmsAvailable": true,
+        "wfsAvailable": false,
+        "wcsAvailable": false,
+        "wmsGetCapabilities": "http://raster.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/ows?service=wms&request=GetCapabilities&version=1.3.0",
+        "wfsGetCapabilities": null,
+        "wcsGetCapabilities": null
+    },
     {
     "descricao": "SFB - Serviço Florestal do Brasil",
     "sigla": "SFB",

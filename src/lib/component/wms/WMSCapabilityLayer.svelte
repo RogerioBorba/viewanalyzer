@@ -12,17 +12,10 @@
     async function btnMetadadoClicked() {
         if (!wmsLayer.metadataURLs())
             return alert("A camada não está associada a metadados.")
-
-        let link = wmsLayer.metadataURLs()[0].link() //wmsLayer.metadataURL().link()
-        window.open(link, "_blank");
-
-        const res = await fetchData(link);
-        if (!res.ok) 
-		    throw new Error('Falha na requisição do endereço.')
-        const text = await res.text()
-        //console.log(text)
-        const textJson = textXml2Json(text)
-        // alert(textJson)   
+            wmsLayer.metadataURLs().forEach(metadataURL => {
+                let link = metadataURL.link() //wmsLayer.metadataURL().link()
+                window.open(link, "_blank");
+            });                
     }
     
     function url() {

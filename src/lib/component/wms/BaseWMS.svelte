@@ -33,7 +33,8 @@
         let layers = wms_capabilities.layerObjects() ;
         if (!layers)
             return -1;        
-        wmsLayers = layers.map(layer => new WMSLayer(layer, null, null));
+        wmsLayers = layers.map(layer => new WMSLayer(layer, null, null, null));
+        
         return wmsLayers.length
     }
 

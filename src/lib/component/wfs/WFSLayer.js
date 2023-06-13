@@ -33,6 +33,7 @@ export class WFSLayer extends BaseLayer {
     }
     metadataURLs() {
         let metadataObjs = this.layerCapability['MetadataURL'];
+        
         if (metadataObjs) {
             if (Array.isArray(metadataObjs))
                 return metadataObjs.map( metadataObj => new MetadataURL(metadataObj))

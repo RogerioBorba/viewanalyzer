@@ -58,14 +58,10 @@
         if (!wmsLayer.metadataURLs())
             return alert("A camada não está associada a metadados.")
 
-        let link = wmsLayer.metadataURLs()[0].link() //wmsLayer.metadataURL().link()
-        window.open(link, "_blank");
-
-        const res = await fetchData(link);
-        if (!res.ok) 
-		    throw new Error('Falha na requisição do endereço.');
-        const text = await res.text();
-        const textJson = textXml2Json(text);
+		wmsLayer.metadataURLs().forEach(metadataURL => {
+			let link = metadataURL.link() //wmsLayer.metadataURL().link()
+			window.open(link, "_blank");
+		});     
         
     }
 	function visiableBtnLayer() {
@@ -80,16 +76,16 @@
 <div class="flex {display}">
 	<p on:click={toggleExpansion} 
 		class="flex-grow text-grey-darkest hover:bg-red truncate text-left text-xs" 
-		title="{wmsLayer.description()}"><span class="p-1 text-xl font-bold cursor-pointer" >{arrow}</span>{wmsLayer.description()}
+		title="{wmsLayer.description()}"><span class="p-1 text-xl font- cursor-pointer" >{arrow}</span>{wmsLayer.description()}
 	</p>
 	<button class="{visibilyBtnMetadata()} focus:outline-none bg-grey-light hover:bg-grey text-grey-darkest font-bold py-1 px-1 rounded inline-flex items-center hover:bg-gray-200 " on:click|preventDefault={btnMetadadoClicked} title="Metadados">
-		<svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-			<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+		<svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px" class="h-6 w-6" fill="#FCF3CF" viewBox="0 0 24 24" >
+			<path stroke="#1C2833" stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
 		</svg>
 	</button>
 	<button class="{visiableBtnLayer()} focus:outline-none bg-grey-light hover:bg-grey text-grey-darkest font-bold py-1 px-1 rounded inline-flex items-center hover:bg-gray-200"  on:click|preventDefault={btnAddLayerClicked} title="Adicionar camada">
-		<svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px" viewBox="0 0 24 24" fill="gray">
-			<path fill-rule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clip-rule="evenodd" />
+		<svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px" viewBox="0 0 24 24" fill="#FEF9E7">
+			<path stroke="#1C2833" fill-rule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clip-rule="evenodd" />
 		</svg>   
 	</button>
 </div>
