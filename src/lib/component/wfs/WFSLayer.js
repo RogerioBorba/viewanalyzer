@@ -31,16 +31,49 @@ export class WFSLayer extends BaseLayer {
     description() {
         return this.title() || this.name() || 'sem título e nome';
     }
+    
     metadataURLs() {
         let metadataObjs = this.layerCapability['MetadataURL'];
+        if (!metadataObjs)
+            return []
+
+        if (Array.isArray(metadataObjs))
+            return metadataObjs.map(metadata => metadata['#text'] || metadata['cdata-section'] )
+        else
+            return [metadataObjs['#text'] || metadataObjs['cdata-section'] ]
         
-        if (metadataObjs) {
-            if (Array.isArray(metadataObjs))
-                return metadataObjs.map( metadataObj => new MetadataURL(metadataObj))
-            
-            return [new MetadataURL(metadataObjs)]
-        }
-            
+        
+    }
+
+    metadataLink() {
+        if(!this.metadataURLs())
+            return null
+        return this.layerCapability.MetadataURL["#text"]
+    }
+
+    metadataType() {
+        if (!this.layerCapability.MetadataURL)
+            return null
+
+        return this.layerCapability.MetadataURL["@attributes"].type
+
+    }
+
+    defaultSRS() {
+        return this.layerCapability.DefaultSRS["#text"]
+    }
+
+    keywords() {
+        let keywordList = this.layerCapability["ows:Keywords"];
+        if (!keywordList)
+            return null
+        let keywords = keywordList["ows:Keyword"]
+        if (keywords)
+            if (Array.isArray(keywords))
+                return keywords.map(keyword => keyword['#text'] || keyword['cdata-section'] )
+            else
+                return keywords['#text'] || keywords['cdata-section']
         return null
     }
+
 }

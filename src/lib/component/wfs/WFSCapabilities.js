@@ -125,12 +125,67 @@ export class WFSCapabilities {
             return null    
         return cap['FeatureTypeList']
     }
+
     features() {
         let featureTyoe = this.featureTypeList();
         if (!featureTyoe)
             return []
         return featureTyoe['FeatureType'];
     }
+
+    lenFeatures() {
+        return this.features().length;    
+    }
+
+    featuresWithoutMetadata() {
+        const layers =  this.features();
+        if (!layers)
+            return null
+        
+        const layerObjects =  layers.filter((layerObj) => {
+           return !layerObj['MetadataURL']
+        })
+        return layerObjects
+    }
+    
+    lenFeaturesWithoutMetadata(){
+        return this.featuresWithoutMetadata().length
+    }
+
+    allKeywords() {
+        const layers =  this.layersFromTree()
+        let arr = []
+        if (!layers)
+            return []
+        const layerObjects =  layers.filter((layerObj) => {
+           return layerObj && layerObj['KeywordList'] && layerObj['KeywordList']['Keyword'] 
+        })
+        
+        for(let i =0; i < layerObjects.length; i++) {
+            let innerArr = layerObjects[i]['KeywordList']['Keyword']
+            innerArr = Array.isArray(innerArr)?innerArr: [innerArr]
+            innerArr.forEach(element => {
+                arr.push(this.nodeValue(element))
+            });
+        }
+        return arr
+    }
+
+    featuresWithoutKeyword() {
+        const layers =  this.features();
+        if (!layers)
+            return []
+        
+        const layerObjects =  layers.filter((layerObj) => {
+           return !layerObj['KeywordList']
+        })
+        return layerObjects
+    }
+
+    lenFeaturesWithoutKeyword() {
+        return this.featuresWithoutKeyword().length;
+    }
+
 
 }
 //module.exports=WMSCapabilities

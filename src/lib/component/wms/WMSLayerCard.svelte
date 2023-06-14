@@ -32,11 +32,11 @@
         {#if metadados }
             {#each metadados as metadata}
                 <p>
-                   <a class="text-xs text-blue-500 underline underline-offset-4 uppercase" href="{metadata.link()}">Link metadado</a>
+                   <a class="text-xs text-blue-500 underline underline-offset-4 uppercase" href="{metadata.link()}" target="_blank">Link metadado</a>
                    <span> tipo: {metadata.type()}</span>
                 </p>
             {/each}
         {:else}
-            <a class="text-xs text-blue-500 uppercase" href="#">Sem metadado associado</a>
+            <a class="text-xs text-yellow-500 uppercase">Sem metadado associado</a>
         {/if}
 </div>

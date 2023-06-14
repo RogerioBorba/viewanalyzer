@@ -1,12 +1,12 @@
 <script lang="ts">
-    import {currentListWMSCapability} from '$lib/store/storeWMS'
-    import WMSLayerCard from '$lib/component/wms/WMSLayerCard.svelte'
-    import {WMSLayer} from '$lib/component/wms/WMSLayer'
+    import {currentListWFSCapability} from '$lib/store/storeWFS';
+    import WFSLayerCard from '$lib/component/wfs/WFSLayerCard.svelte';
+    import { WFSLayer } from '$lib/component/wfs/WFSLayer';
     import { onMount } from 'svelte';
     import { Navbar, NavBrand, Dropdown, DropdownHeader, Avatar, DropdownItem, DropdownDivider, NavUl, NavHamburger, NavLi } from 'flowbite-svelte';
-    let wmsLayers = []
+    let wfsLayers = []
     let textEntered = null
-    let filteredWMSLayers = []
+    let filteredWFSLayers = []
     let withMetadadaChecked = false
     let withoutMetadadaChecked = false
     let withoutKeywordChecked = false
@@ -14,18 +14,18 @@
 
     let avatar = ''
     onMount(async () => {
-        let current = await $currentListWMSCapability
+        let current = await $currentListWFSCapability
         let i = 1
         if (!current)
             return
-        console.log(current)
-        let layerObjects = await current.layersFromTree()
-        wmsLayers = layerObjects.map( each => {return new WMSLayer(each, i++ , null)})
+        
+        let layerObjects = await current.features()
+        wfsLayers = layerObjects.map( each => {return new WFSLayer(each, i++ , null)})
     })
      
-    function filterWMSLayers() {
+    function filterWFSLayers() {
         if (textEntered && textEntered.length >= 3) {
-            wmsLayers.filter(e => (e.title().toLowerCase().search(textEntered.toLowerCase()) > -1) || 
+            wfsLayers.filter(e => (e.title().toLowerCase().search(textEntered.toLowerCase()) > -1) || 
                               (e.name().toLowerCase().search(textEntered.toLowerCase()) > -1))
         } else {
 
@@ -34,24 +34,29 @@
 
     $: {
         if (textEntered && textEntered.length >= 3) {
-            filteredWMSLayers = wmsLayers.filter(e => (e.title().toLowerCase().search(textEntered.toLowerCase()) > -1) || (e.name().toLowerCase().search(textEntered.toLowerCase()) > -1))
+            filteredWFSLayers = wfsLayers.filter(e => (e.title().toLowerCase().search(textEntered.toLowerCase()) > -1) || (e.name().toLowerCase().search(textEntered.toLowerCase()) > -1))
             
         }
         else {
-            filteredWMSLayers = [...wmsLayers]
+            filteredWFSLayers = [...wfsLayers]
         }    
 
-        if (withoutMetadadaChecked) 
-            filteredWMSLayers = filteredWMSLayers.filter(e => !e.metadataURLs())
-        
-        if (withMetadadaChecked) 
-            filteredWMSLayers = filteredWMSLayers.filter(e => e.metadataURLs() && e.metadataURLs().length > 0)
+        if (withoutMetadadaChecked) {
+            filteredWFSLayers = filteredWFSLayers.filter(e => !e.metadataURLs() || e.metadataURLs().length == 0 )
+            withMetadadaChecked = false
+        }
         
         if (withoutKeywordChecked)
-            filteredWMSLayers = filteredWMSLayers.filter(e => !e.keywords())
+            filteredWFSLayers = filteredWFSLayers.filter(e => !e.keywords())
         
         if (nameEqualTitleChecked)
-            filteredWMSLayers = filteredWMSLayers.filter(e => e.title()== e.name())    
+            filteredWFSLayers = filteredWFSLayers.filter(e => e.title()== e.name())    
+
+        if (withMetadadaChecked) {
+            filteredWFSLayers = filteredWFSLayers.filter(e =>  e.metadataURLs().length > 0 )
+            withoutMetadadaChecked = false
+        }
+
     }     
     
 </script>
@@ -75,13 +80,13 @@
         <span class="mr-5">Nome igual ao título</span>
     </div>
     <div>
-        <p>Qtd : {filteredWMSLayers.length}</p>
+        <p>Qtd : {filteredWFSLayers.length}</p>
         
     </div>
 </div>
 <div class = "m-2 grid gap-2 md:grid-cols-3 grid-cols-1">
-    {#each filteredWMSLayers as wmsLayer (wmsLayer.oid)}
-        <WMSLayerCard wmsLayer={wmsLayer}></WMSLayerCard>
+    {#each filteredWFSLayers as wfsLayer (wfsLayer.oid)}
+        <WFSLayerCard wfsLayer={wfsLayer}></WFSLayerCard>
     {/each}    
 
 
