@@ -1178,6 +1178,13 @@ export const catalogos_servicos = [
             "noCentralCategoria": "INEA"
         },
         {
+            "descricao": "PGGM - Programa de Geologia e Geofísica Marinha",
+            "sigla": "PGGM",
+            "url_metadados": "https://metadados.inde.gov.br/geonetwork",
+            "cswGetCapabilities": "https://metadados.inde.gov.br/geonetwork/srv/por/csw?service=CSW&version=2.0.2&request=GetCapabilities",
+            "noCentralCategoria": "PGGM"
+        },
+        {
             "descricao": "PRODEMG - Companhia de Tecnologia da Informação do Estado de Minas Gerais",
             "sigla": "PRODEMG",
             "url": "https://www.geoservicos.prodemge.gov.br/geonetwork",

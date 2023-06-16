@@ -1,7 +1,6 @@
 <script>
     import {facadeOL, selectedLayers } from '$lib/store/storeMap'
-    import { textXml2Json } from '$lib/xml-json/xml2Json';
-    import { fetchData } from '$lib/request/requestData';
+    
     export let wmsLayer;
     export let capabilitiesUrl;
     let display = '';

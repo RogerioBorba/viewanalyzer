@@ -1,5 +1,5 @@
 <script>
-    import {countMetadata, countProcessado, postURL} from '$lib/store/storeMetadata'
+    import {countMetadata, countProcessado, postURL, totalMetadata} from '$lib/store/storeMetadata'
     import { Spinner} from 'flowbite-svelte';
     import { goto } from '$app/navigation';
     import { fade } from 'svelte/transition'
@@ -28,7 +28,7 @@
         let body = getBody()
         str = str.substring(0, str.indexOf('?'))
         $postURL = {url: str , body: body}
-    
+        totalMetadata.set(qtdMetadados)
         goto('/csw/metadados')
     }
 
