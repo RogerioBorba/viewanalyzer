@@ -14,7 +14,7 @@ export class MD_Identification {
     }
 
     status() {
-        if (this.metadataObject["gmd:status"]) 
+        if (this.metadataObject["gmd:status"] && this.metadataObject["gmd:status"]["gmd:MD_ProgressCode"]) 
             return this.metadataObject["gmd:status"]["gmd:MD_ProgressCode"]["@attributes"].codeListValue
         return ''
     }
@@ -23,6 +23,24 @@ export class MD_Identification {
         if (this.metadataObject["gmd:abstract"])
             return this.metadataObject["gmd:abstract"]["gco:CharacterString"]["#text"]
         return ''
+    }
+    
+    descriptiveKeywords() {
+        return this.metadataObject["gmd:descriptiveKeywords"]
+    }
+
+    keywords() {
+        if (this.descriptiveKeywords()== null)
+            return []
+        
+        if (this.descriptiveKeywords() && this.descriptiveKeywords()["gmd:MD_Keywords"] == null)
+            return []
+        
+        const keys = this.descriptiveKeywords()["gmd:MD_Keywords"]["gmd:keyword"]    
+        if (keys == null)
+            return []
+        return keys.map((k)=> {return k["gco:CharacterString"]["#text"]})
+
     }
 }
 

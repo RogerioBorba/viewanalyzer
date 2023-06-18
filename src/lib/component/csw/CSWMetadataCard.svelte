@@ -17,8 +17,9 @@
             return null
         }   
         metaMetadata = new MD_Metadata(md_metadata)
-        console.log("metaMetadata.getIdentificationInfo(): ", metaMetadata.getIdentificationInfo())
-        console.log("metaMetadata.getDistributionInfo()?.onLine(): ", metaMetadata.getDistributionInfo())
+        console.log("metaMetadata.getIdentificationInfo().keywords(): ", metaMetadata.getIdentificationInfo().keywords())
+        if (metaMetadata.getDistributionInfo())
+            console.log("metaMetadata.getDistributionInfo().onLineProtocols(): ", metaMetadata.getDistributionInfo().onLineProtocols())
         standardName = metaMetadata.metadataStandardName() //["gco:CharacterString"]
         
         
@@ -31,8 +32,10 @@
             <h2 class="font-bold text-blue-800"><span class="text-gray-950 font-bold">Título:</span> { metaMetadata.getIdentificationInfo().title() }</h2>
             <h2 class="font-semibold"> <span class="font-bold">Status:</span> {metaMetadata.getIdentificationInfo().status()} </h2>
             <h2 class="font-semibold"> <span class="font-bold">Resumo:</span> {metaMetadata.getIdentificationInfo().abstractInfo()} </h2>
+            <h2 class="font-semibold"> <span class="font-bold">Palavras chaves:</span> {metaMetadata.getIdentificationInfo().keywords()} </h2>
         {/if}
         {#if metaMetadata.getDistributionInfo()}
+            <h2 class="font-semibold"> Protocolos: { metaMetadata.getDistributionInfo().onLineProtocols() }</h2>
         {/if}
         <h2 class="font-semibold"> Padrão de metadados: { standardName }</h2>
     {/if}

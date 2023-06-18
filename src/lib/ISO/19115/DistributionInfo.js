@@ -8,7 +8,7 @@ export class MD_Distribution {
     constructor(metadataObject) {
         this.metadataObject = metadataObject
         this.description = ''
-        this.transferOptions = [];
+        this.transferOptions = null;
     }
 
      getTransferOptions() {
@@ -24,9 +24,19 @@ export class MD_Distribution {
             return []
         if (this.getTransferOptions()["gmd:MD_DigitalTransferOptions"]["gmd:onLine"] == null)
             return []
-        let arrOnline = this.getTransferOptions()["gmd:MD_DigitalTransferOptions"]["gmd:onLine"]
-        return arrOnline
+        let arrOnline =  this.getTransferOptions()["gmd:MD_DigitalTransferOptions"]["gmd:onLine"] 
+        if (arrOnline == null )
+            return []
+        return Array.isArray(arrOnline )? arrOnline: [arrOnline]
+        
 
+    }
+    onLineProtocols() {
+        const onLINE =  this.onLine()
+        return onLINE.map((online)=> {
+            if (online["gmd:CI_OnlineResource"]  && online["gmd:CI_OnlineResource"]["gmd:protocol"] && online["gmd:CI_OnlineResource"]["gmd:protocol"]["gco:CharacterString"])
+                return online["gmd:CI_OnlineResource"]["gmd:protocol"]["gco:CharacterString"]["#text"]})
+            return ' - '
     }
     
 }
