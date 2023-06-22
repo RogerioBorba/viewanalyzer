@@ -1,5 +1,6 @@
 <script lang="ts">
     export let  brand = 'OGC Services'
+    import { goto } from '$app/navigation';
     const hidden = 'hidden'
     const block = 'inline-flex'
     let show_mobile_menu = 'hidden'
@@ -14,12 +15,14 @@
     
         <!--brand-->
         <div class="flex items-center rounded  p-2">
-            <a class="mr-2" href="#">
+            
+            <a class="mr-2" href="/">
                 <svg class=" h-6 w-6 ml-2  text-blue-300" xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
             </a>
             <span class="font-bold uppercase tracking-wider">{brand}</span>
+            
         </div>
         <!--btn-->
         
@@ -28,6 +31,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
         </button>
+        
          <!--links-->
         <div class="{show_mobile_menu} flex flex-col md:inline-flex md:flex-row md:ml-auto md:w-auto w-full">
                 <a class="mx-1 p-2 font-bold text-white hover:bg-blue-800  hover:rounded transition duration-300" href="#">

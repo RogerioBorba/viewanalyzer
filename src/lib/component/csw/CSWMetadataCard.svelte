@@ -35,9 +35,9 @@
             <h2 class="font-semibold"> <span class="font-bold">Palavras chaves:</span> {metaMetadata.getIdentificationInfo().keywords()} </h2>
         {/if}
         {#if metaMetadata.getDistributionInfo()}
-            <h2 class="font-semibold"> Protocolos: { metaMetadata.getDistributionInfo().onLineProtocols() }</h2>
+            <h2 class="font-semibold"> <span class="font-bold">Protocolos:</span> { metaMetadata.getDistributionInfo().onLineProtocols() }</h2>
         {/if}
-        <h2 class="font-semibold"> Padrão de metadados: { standardName }</h2>
+        <h2 class="font-semibold"> <span class="font-bold">Padrão de metadados:</span> { standardName }</h2>
     {/if}
     
     

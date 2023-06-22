@@ -1,5 +1,5 @@
 <script>
-    import {countTotalLayer, countTotalLayerWithoutMetadata ,countProcessado, currentListWFSCapability} from '$lib/store/storeWFS'
+    import {countTotalLayerWFS, countTotalLayerWithoutMetadataWFS, countWFSProcessado, currentListWFSCapability} from '$lib/store/storeWFS'
     import { goto } from '$app/navigation';
 
     import { Spinner} from 'flowbite-svelte';
@@ -49,11 +49,11 @@
             let xmlText = await res.text()
             wfsCapabilities = new WFSCapabilities(await textXml2Json(xmlText))
             initializeVariablesOnMount()
-            $countTotalLayer += qtdCamada
-            $countTotalLayerWithoutMetadata += qtdCamadaSemMetadadosAssociado
+            $countTotalLayerWFS += qtdCamada
+            $countTotalLayerWithoutMetadataWFS += qtdCamadaSemMetadadosAssociado
 
             tempoRequisicao = parseFloat(((new Date().getTime()) - tempo)/1000).toFixed(2)
-            $countProcessado = $countProcessado + 1
+            $countWFSProcessado = $countWFSProcessado + 1
             spinHidden = 'hidden'
             spinMessage = 'processado com sucesso'
         } catch (error) {
@@ -63,7 +63,7 @@
             bgColor =  'bg-red-200'
             spinHidden = 'hidden'
             spinMessage = 'processado com erro'
-            $countProcessado = $countProcessado + 1
+            $countWFSProcessado = $countWFSProcessado + 1
         }
 		
 	});

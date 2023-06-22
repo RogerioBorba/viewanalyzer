@@ -153,19 +153,24 @@ export class WFSCapabilities {
     }
 
     allKeywords() {
-        const layers =  this.layersFromTree()
+        const layers =  this.features()
         let arr = []
         if (!layers)
             return []
         const layerObjects =  layers.filter((layerObj) => {
-           return layerObj && layerObj['KeywordList'] && layerObj['KeywordList']['Keyword'] 
+           return layerObj && layerObj["ows:Keywords"] && layerObj["ows:Keywords"]["ows:Keyword"]
         })
         
         for(let i =0; i < layerObjects.length; i++) {
-            let innerArr = layerObjects[i]['KeywordList']['Keyword']
+            
+            let innerArr = layerObjects[i]["ows:Keywords"]
             innerArr = Array.isArray(innerArr)?innerArr: [innerArr]
             innerArr.forEach(element => {
-                arr.push(this.nodeValue(element))
+                if (!element["ows:Keyword"])
+                    return
+                let lkeys    = element["ows:Keyword"]
+                let innerInnerArray = Array.isArray(lkeys)? lkeys: [lkeys]
+                innerInnerArray.forEach(ele => arr.push(this.nodeValue(ele)))
             });
         }
         return arr

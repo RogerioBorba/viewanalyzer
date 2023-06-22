@@ -57,7 +57,7 @@
                 let xmlText = await res.text()
                 let xmlJsonObject = textXml2Json(xmlText)
                 //["csw:GetRecordsResponse"]["csw:SearchResults"]["gmd:MD_Metadata"]
-                console.log("xmlJsonObject:", xmlJsonObject)
+                //console.log("xmlJsonObject:", xmlJsonObject)
                 let metadataObjOrArray = xmlJsonObject["csw:GetRecordsResponse"]["csw:SearchResults"]["gmd:MD_Metadata"]
                 if (Array.isArray(metadataObjOrArray))
                     arrMetadataObj =  arrMetadataObj.concat(metadataObjOrArray);
