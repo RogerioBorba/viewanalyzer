@@ -67,15 +67,15 @@ export const catalogos_servicos = [
     {
     "descricao": "CENSIPAM - Centro Gestor e Operacional do Sistema de Proteção da Amazônia",
     "sigla": "CENSIPAM",
-    "url": "http://panorama.sipam.gov.br/geoserver/publico/ows/",
+    "url": "https://panorama.sipam.gov.br/geoserver/publico/ows/",
     "wmsAvailable": true,
     "wfsAvailable": true,
     "wcsAvailable": true,
-    "wmsGetCapabilities": "http://panorama.sipam.gov.br/geoserver/publico/ows/?service=wms&request=GetCapabilities&version=1.3.0",
-    "wfsGetCapabilities": "http://panorama.sipam.gov.br/geoserver/publico/ows/?service=wfs&request=GetCapabilities&version=1.3.0",
-    "wcsGetCapabilities": "http://panorama.sipam.gov.br/geoserver/publico/ows/?service=wcs&request=GetCapabilities&version=1.3.0",
-    "url_metadados": "http://panorama.sipam.gov.br/geonetwork",
-    "cswGetCapabilities": "http://panorama.sipam.gov.br/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetCapabilities"
+    "wmsGetCapabilities": "https://panorama.sipam.gov.br/geoserver/publico/ows/?service=wms&request=GetCapabilities&version=1.3.0",
+    "wfsGetCapabilities": "https://panorama.sipam.gov.br/geoserver/publico/ows/?service=wfs&request=GetCapabilities&version=1.3.0",
+    "wcsGetCapabilities": "https://panorama.sipam.gov.br/geoserver/publico/ows/?service=wcs&request=GetCapabilities&version=1.3.0",
+    "url_metadados": "https://panorama.sipam.gov.br/geonetwork",
+    "cswGetCapabilities": "https://panorama.sipam.gov.br/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetCapabilities"
     },
     {
     "descricao": "CMR/Funai - Centro de Monitoramento Remoto ",
@@ -971,8 +971,8 @@ export const catalogos_servicos = [
         {
             "descricao": "CENSIPAM - Centro Gestor e Operacional do Sistema de Proteção da Amazônia",  
             "sigla": "CENSIPAM",
-            "url": "http://panorama.sipam.gov.br/geonetwork/",
-            "cswGetCapabilities": "http://panorama.sipam.gov.br/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetCapabilities",
+            "url": "https://panorama.sipam.gov.br/geonetwork/",
+            "cswGetCapabilities": "https://panorama.sipam.gov.br/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetCapabilities",
             "noCentralCategoria": null
         },
         {

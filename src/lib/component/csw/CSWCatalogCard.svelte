@@ -37,7 +37,7 @@
         return iri.substring(0, indexOfQuestionMark );
     }
 
-    async function getResultProtocolOGC(protocolo) {
+    async function getResultProtocol(protocolo) {
         try {
             let url = getURL(idDescricaoIriNoCentralCategoria.iri)
             let urlProtocolo = urlWithParametersOGCService(url, protocolo);
@@ -84,8 +84,8 @@
             let xmlJsonObject = textXml2Json(xmlText)
             //console.log(xmlJsonObject)
             qtdMetadados = xmlJsonObject["csw:GetRecordsResponse"]["csw:SearchResults"]["@attributes"]["numberOfRecordsMatched"]
-            qtdMetadadosComWMS = await getResultProtocolOGC('OGC:WMS')
-            qtdMetadadosComWFS = await getResultProtocolOGC('OGC:WFS')
+            qtdMetadadosComWMS = await getResultProtocol('OGC:WMS')
+            qtdMetadadosComWFS = await getResultProtocol('OGC:WFS')
             $countProcessado = $countProcessado + 1
             if(qtdMetadados && !isNaN(parseInt(qtdMetadados)))
                 $countMetadata = $countMetadata + parseInt(qtdMetadados)

@@ -39,7 +39,8 @@ export class MD_Identification {
         const keys = this.descriptiveKeywords()["gmd:MD_Keywords"]["gmd:keyword"]    
         if (keys == null)
             return []
-        return keys.map((k)=> {return k["gco:CharacterString"]["#text"]})
+        const arr = Array.isArray(keys)?keys:[keys]
+        return arr.map((k)=> {return k["gco:CharacterString"]["#text"]})
 
     }
 }

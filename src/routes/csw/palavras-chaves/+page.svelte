@@ -1,6 +1,6 @@
 <script lang="ts">
     import {catalogos_csw} from '$lib/inde/CatalogoINDE';
-    import {allCSWKeywords, countCSWProcessado,  keywordCSWCountByName} from '$lib/store/storeMetadata';
+    import {allCSWKeywords, countCSWProcessado,  keywordCSWCountByName, countAllMetadata, totalAllMetadata} from '$lib/store/storeMetadata';
     import Navbar from '$lib/component/base/navbar.svelte';
     import CSWKeywordCard from '$lib/component/csw/CSWKeywordCard.svelte'
     
@@ -59,7 +59,7 @@
         <button class="mr-4 focus:outline-none bg-grey-light hover:bg-grey font-bold rounded inline-flex items-center hover:bg-gray-100" on:click|preventDefault={btnSearchClicked} title="Realizar requisição">
             <svg  class="text-indigo-500 fill-current border rounded border-gray-400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="20" height="20" color='green' viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
         </button>
-        <p class="mr-2"> Quantidade de catálogos processados por selecionados: {$countCSWProcessado}/{qtdCatalog} </p>
+        <p class="mr-2"> Quantidade de metadados pelo total geral  dos selecionados: {$countAllMetadata}/{$totalAllMetadata} </p>
         <p> Quantidade de palavras chaves: {$allCSWKeywords.length}</p>
         
     </div>
