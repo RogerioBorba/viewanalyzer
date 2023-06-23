@@ -3,11 +3,12 @@
     import Navbar from '$lib/component/base/navbar.svelte'
     import {fetchDataByPost} from '$lib/request/requestDataByPost';
     import { textXml2Json } from '$lib/xml-json/xml2Json';
+    import { fetchData } from "$lib/request/requestData";
     const texto = 'Link de metadados'
     let qtd = 0
     let simple_qtd = 0
     let urlCatalogo = 'https://metadados.inde.gov.br/geonetwork/srv/eng/csw'
-    const body = `<csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" service="CSW" 
+   /* const body = `<csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" service="CSW" 
     version="2.0.2" resultType="hits">
   <csw:Query typeNames="csw:Record">
     <csw:Constraint version="1.1.0">
@@ -20,12 +21,13 @@
     </csw:Constraint>
   </csw:Query>
 </csw:GetRecords>`
-    const simpleBody = `<csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" service="CSW" 
+*/
+ /*   const simpleBody = `<csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" service="CSW" 
     version="2.0.2" resultType="hits">
   <csw:Query typeNames="csw:Record"> 
   </csw:Query>
 </csw:GetRecords>`
-
+*/
     async function getResultPost(res) {
         let xmlText = await res.text();
         let xmlJsonObject = textXml2Json(xmlText);
@@ -34,9 +36,10 @@
     async function btnCatalogoClicked() {
         
         try {
-            let res = await fetchDataByPost(urlCatalogo, simpleBody, 'application/xml') 
+            let res = await fetchData(`${urlCatalogo}?service=CSW&version=2.0.2&request=GetRecords&typeNames=csw:Record&ElementSetName=brief&resultType=hits&typeNames=gmd:MD_Metadata`) 
             simple_qtd = await getResultPost(res)
-            res = await fetchDataByPost(urlCatalogo, body, 'application/xml') 
+            const parametersWith_OGC_WFS = 'service=CSW&version=2.0.2&request=GetRecords&typeNames=csw:Record&constraintLanguage=FILTER&CONSTRAINT_LANGUAGE_VERSION=1.1.0&constraint=<Filter xmlns="http://www.opengis.net/ogc"><PropertyIsEqualTo><PropertyName>protocol</PropertyName><Literal>OGC:WFS</Literal></PropertyIsEqualTo></Filter>'
+            res = await fetchData(`${urlCatalogo}?${parametersWith_OGC_WFS}`) 
             qtd = await await getResultPost(res)
 
         } catch (error) {
