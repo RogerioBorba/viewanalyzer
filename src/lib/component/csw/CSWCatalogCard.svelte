@@ -74,6 +74,8 @@
         try {
             let res
             if(idDescricaoIriNoCentralCategoria.noCentralCategoria) {
+                console.log(postRecordsParams)
+                console.log(url)
                 res = await fetchDataByPost(url, postRecordsParams,'application/xml')
                 
             } else {

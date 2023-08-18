@@ -1,6 +1,7 @@
 //import 'ol/ol.css';
 //import 'ol-popup/src/ol-popup.css';
 //import Popup from 'ol-popup/';
+import { Fill} from 'ol/style';
 import {toStringHDMS} from 'ol/coordinate';
 import { transform } from 'ol/proj';
 import Map from 'ol/Map';
@@ -9,10 +10,11 @@ import View from 'ol/View';
 //import Graticule from 'ol/Graticule';
 import TileWMS from 'ol/source/TileWMS.js';
 import TileLayer from 'ol/layer/Tile';
-
+import Layer from 'ol/layer/Layer.js';
 import ImageLayer from 'ol/layer/Image';
 import VectorLayer from 'ol/layer/Vector';
 import VectorImageLayer from 'ol/layer/VectorImage.js';
+import WebGLVectorLayerRenderer from 'ol/renderer/webgl/VectorLayer.js';
 
 import { ImageStatic, ImageWMS, Vector, XYZ, TileImage } from 'ol/source';
 import { Style, Icon, Stroke } from 'ol/style';
@@ -21,87 +23,58 @@ import GeoJSON from 'ol/format/GeoJSON';
 import { WMSCapabilityLayer} from './LayerResource';
 import { browser} from '$app/environment';
 import {fetchData} from '$lib/request/requestData.ts';
+
+export const osmBaseTile = new TileLayer({ source: new XYZ({url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'}), zIndex: 0 })
+export const googleBaseTile = new TileLayer({source: new XYZ({url: 'http://mt{0-3}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'}), zIndex: 0})
+//returns a google satelite TileLayer as baselayer
+export const sateliteBaseTile = new TileLayer({source: new TileImage({ url: 'http://mt1.google.com/vt/lyrs=s&hl=pl&&x={x}&y={y}&z={z}'}), zIndex: 0})
+//returns a water TileLayer as baselayer
+export const watercolorBaseTile = new TileLayer({source: new XYZ({url: 'http://{a-c}.tile.stamen.com/watercolor/{z}/{x}/{y}.png'}), zIndex: 0})
+//returns wikimedia TileLayer as baselayer
+export const wikimediaBaseTile = new TileLayer({source: new XYZ({url: 'https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png'}), zIndex: 0})
+export const nullBaseTile = null;
+
 /**
- * Elements that make up the popup.
- * @type {Overlay | null}
+ * Um objeto contendo os diferentes tiles base para um mapa.
+ *
+ * @type {Object.<string, TileLayer | null>}
+ * @property {TileLayer} osm - OSM base tile.
+ * @property {TileLayer} google - Google base tile.
+ * @property {TileLayer} satelite - Satelite base tile.
+ * @property {TileLayer} watercolor - Watercolor base tile.
+ * @property {TileLayer} wikimedia - Wikimedia base tile.
+ * @property {null} null - Valor nulo.
  */
-
-  
-
-/**
- * Add a click handler to hide the popup.
- * @return {boolean} Don't follow the href.
- 
-closer.onclick = function () {
-  overlay.setPosition(undefined);
-  closer.blur();
-  return false;
+export const BaseTiles = {
+  osm: osmBaseTile,
+  google: googleBaseTile,
+  satelite: sateliteBaseTile,
+  watercolor: watercolorBaseTile,
+  wikimedia: wikimediaBaseTile,
+  none: null,
 };
-*/
+
 export class FacadeOL {
     constructor(id_map='id_map', coordinates_center=[-4331024.58685793, -1976355.8033415168], a_zoom_value = 4, a_baseLayer_name='OSM' ) {
       this.map = new Map({ target: id_map,  controls:[]});
       this.view = new View({ center: coordinates_center, zoom: a_zoom_value});
       this.map.setView(this.view);
-      this.currentBaseLayer = this.osmBaseLayer();
-      this.currentBaseLayerName = 'OSM';
+      this.currentBaseLayer = osmBaseTile;
+      this.currentBaseLayerName = 'osm';
       this.map.addLayer(this.currentBaseLayer);
       this.addOverlay()  
       this.onClickMap();
     }
-    
-    
-    // Begins - These operations are related to the baselayer
-    //return a null base layer
-    nullBaseLayer() {
-      return null
-    }
-
-    //returns a OSM TileLayer as baselayer
-    osmBaseLayer() {
-      return new TileLayer({ source: new XYZ({url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'}), zIndex: 0 })
-    }
-
-    //returns a google TileLayer as baselayer
-    googleBaseLayer() {
-      return new TileLayer({source: new XYZ({url: 'http://mt{0-3}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'}), zIndex: 0})
-    }
-
-
-    //returns a google satelite TileLayer as baselayer
-    sateliteBaseLayer() {
-      return new TileLayer({source: new TileImage({ url: 'http://mt1.google.com/vt/lyrs=s&hl=pl&&x={x}&y={y}&z={z}'}), zIndex: 0})
-    }
-
-    //returns a water TileLayer as baselayer
-    watercolorBaseLayer() {
-      return new TileLayer({source: new XYZ({url: 'http://{a-c}.tile.stamen.com/watercolor/{z}/{x}/{y}.png'}), zIndex: 0})
-    }
-
-    //returns wikimedia TileLayer as baselayer
-    wikimediaBaseLayer() {
-      return new TileLayer({source: new XYZ({url: 'https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png'}), zIndex: 0})
-    }
-
     //returns a TileLayer based on name(a_baseLayer_name) or null
     baseLayer(a_baseLayer_name) {
       // name: 'Wikimedia', value: 'wikimedia'}, {name: 'Nenhum', value: null}]
-      const layers = {
-        'OSM': this.osmBaseLayer(),
-        'google': this.googleBaseLayer() ,
-        'satelite': this.sateliteBaseLayer(),
-        'watercolor': this.watercolorBaseLayer(),
-        'wikimedia': this.wikimediaBaseLayer(),
-        null: this.nullBaseLayer(),
-        'nullbaselayer': this.nullBaseLayer(),
-        
-      }
-      return layers[a_baseLayer_name]
+      
+      return BaseTiles[a_baseLayer_name]
     }
 
     setBaseLayer(a_baseLayer_name) {
       this.map.removeLayer(this.currentBaseLayer)
-      if (!a_baseLayer_name)
+      if (a_baseLayer_name == 'none')
         return
       this.currentBaseLayer = this.baseLayer(a_baseLayer_name)
       this.currentBaseLayerName = a_baseLayer_name 
@@ -204,6 +177,38 @@ export class FacadeOL {
       this.map.addLayer(vector_layer);
       return vector_layer;
       
+    }
+    /**
+   * 
+   * adiciona um geojson usando webGL
+   * @param {string} geojson - um geojson.
+   * @param {string | null} style - um estilo.
+   * @returns  null.
+   */
+    async addGeoJSONWebGLLayer(geojson, a_style = null) {
+      const style = {
+        'stroke': ['*', ['get', 'COLOR'], [32, 32, 32]],
+        'stroke-width': 40.5,
+        'fill': ['*', ['get', 'COLOR'], [155, 155, 155, 0.6]],
+      };
+      
+      class WebGLLayer extends Layer {
+        createRenderer() {
+          return new WebGLVectorLayerRenderer(this, {style});
+        }
+      }
+      const geo_json = new GeoJSON();
+      const gjson_format = geo_json.readFeatures(geojson, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});
+      //const gjson_format = geo_json.readFeatures(geojson, {featureProjection: this.map.getView().getProjection()});
+      const vector_source = new Vector({features: gjson_format});
+      const vector_layer = new WebGLLayer({source: vector_source});
+      vector_layer.map = this.map;
+      //if (style)
+       //   vector_layer.setStyle(style)
+
+      //vector_layer.render('image');
+      this.map.addLayer(vector_layer);
+      return vector_layer;
     }
     
     addWFSLayerFromCapability(wfsLayer) {

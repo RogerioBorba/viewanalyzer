@@ -42,12 +42,13 @@
         if(!wfsLayer.name())
             return alert("Esta é uma camada de agrupamento. Apenas as camadas interiores podem ser exibidas!");
         
-        let urlFeature = urlGetFeature();
+        let urlFeature = urlGetFeature(); //'https://openlayers.org/data/vector/ecoregions.json';
         let data = await fetchDataByType(urlFeature);
         let dataJson = await data.json();
         //console.log(dataJson);
         //$facadeOL.add(wfsLayer);
         let layer = await $facadeOL.addGeoJSONLayer(dataJson);
+        //let layer = await $facadeOL.addGeoJSONWebGLLayer(dataJson);
         wfsLayer.layer = layer;
         $selectedLayers = [...$selectedLayers, wfsLayer];
         display='hidden';

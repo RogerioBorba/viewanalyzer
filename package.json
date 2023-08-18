@@ -24,7 +24,7 @@
 	"type": "module",
 	"dependencies": {
 		"flowbite-svelte": "^0.34.9",
-		"ol": "^7.3.0",
+		"ol": "^7.4.0",
 		"xmldom": "^0.6.0"
 	}
 }

@@ -114,35 +114,6 @@
             }
         }  
     } 
-
-    //https://metadados.inde.gov.br/geonetwork/srv/por/csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=csw:Record&constraintLanguage=CQL_TEXT&Constraint=%E2%80%9C%%E2%80%9D&ElementSetName=full&resultType=results&maxRecords=20&startPosition=19
-    //data = {url: url, body: body, content_type: content_type}
-    async function getXML(data) {
-        try {
-            const maxRecords = getParameterValueAsStr(data.body.toLowerCase(), 'maxRecords'.toLowerCase())
-            const startPosition = getParameterValueAsStr(data.body.toLowerCase(), 'startPosition'.toLowerCase())
-            const query = `request=GetRecords&service=CSW&outputSchema=http://www.isotc211.org/2005/gmd&version=2.0.2&ElementSetName=full&resultType=results&typeNames=gmd:MD_Metadata&startPosition=${startPosition}&maxRecords=${maxRecords}`
-            const url = `${data['url']}?${query}`
-            const controller = new AbortController();
-            const signal = controller.signal;
-            const res = await fetchData(url, signal)
-            return  res
-            
-        } catch (error) {
-            console.log('get-records>>getXML(data)')
-            console.log(error)
-            return new Response(`Erro na requisição de url: ${data["url"]} e body: ${data["body"]}`, { status: 500});
-        }   
-    }
-
-    function getParameterValueAsStr(body, parameter) {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(body, 'text/xml');
-        const element = xmlDoc.documentElement;
-        const value = element.getAttribute(parameter);
-
-        return value || null;
-    }
     
     async function fetchXML(startPosition, maxRecords) {
         try {

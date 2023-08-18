@@ -47,7 +47,7 @@
         await Promise.all(promisesCapabilityObject).then().catch((error) => {console.error(error.message);});
     }
 
-    $: if (selectedItems.length > 0) {
+    $: if (selectedItems.length > 0 && nameTile.length > 1 ) {
             colorBtnSearch ="black"
             bgColorBtnSearch = "bg-gray-300"
             disableButtonRealizarRequest = false
