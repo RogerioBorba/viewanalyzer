@@ -14,7 +14,7 @@ import Layer from 'ol/layer/Layer.js';
 import ImageLayer from 'ol/layer/Image';
 import VectorLayer from 'ol/layer/Vector';
 import VectorImageLayer from 'ol/layer/VectorImage.js';
-import WebGLVectorLayerRenderer from 'ol/renderer/webgl/VectorLayer.js';
+
 
 import { ImageStatic, ImageWMS, Vector, XYZ, TileImage } from 'ol/source';
 import { Style, Icon, Stroke } from 'ol/style';
@@ -178,38 +178,8 @@ export class FacadeOL {
       return vector_layer;
       
     }
-    /**
-   * 
-   * adiciona um geojson usando webGL
-   * @param {string} geojson - um geojson.
-   * @param {string | null} style - um estilo.
-   * @returns  null.
-   */
-    async addGeoJSONWebGLLayer(geojson, a_style = null) {
-      const style = {
-        'stroke': ['*', ['get', 'COLOR'], [32, 32, 32]],
-        'stroke-width': 40.5,
-        'fill': ['*', ['get', 'COLOR'], [155, 155, 155, 0.6]],
-      };
+    
       
-      class WebGLLayer extends Layer {
-        createRenderer() {
-          return new WebGLVectorLayerRenderer(this, {style});
-        }
-      }
-      const geo_json = new GeoJSON();
-      const gjson_format = geo_json.readFeatures(geojson, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});
-      //const gjson_format = geo_json.readFeatures(geojson, {featureProjection: this.map.getView().getProjection()});
-      const vector_source = new Vector({features: gjson_format});
-      const vector_layer = new WebGLLayer({source: vector_source});
-      vector_layer.map = this.map;
-      //if (style)
-       //   vector_layer.setStyle(style)
-
-      //vector_layer.render('image');
-      this.map.addLayer(vector_layer);
-      return vector_layer;
-    }
     
     addWFSLayerFromCapability(wfsLayer) {
       this.map.addLayer(vectorLayer);
