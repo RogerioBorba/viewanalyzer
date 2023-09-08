@@ -31,9 +31,7 @@
             let tempo = new Date().getTime();
             let res = await fetchData(objIdDescricaoIri.iri)
             let xmlText = await res.text()
-            complexArray = complexTypeList(xmlText)
-            currentListComplexType.set(complexArray)
-            console.log(complexArray)
+            complexArray = await complexTypeList(xmlText)
             tempoRequisicao = parseFloat(((new Date().getTime()) - tempo)/1000).toFixed(2)
             $countWFSProcessado = $countWFSProcessado + 1
             spinHidden = 'hidden'

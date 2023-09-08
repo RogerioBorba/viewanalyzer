@@ -1,3 +1,5 @@
+import { fetchData } from "$lib/request/requestData";
+
 /**
  * Classe que representa um tipo complexo.
  *
@@ -93,14 +95,11 @@ export class ElementProperty {
     return xmlDoc
 
   }
-
+  
   /**
- * @param {string} xmlString
+ * @param {NodeList} nodeList
  */
-  export function complexTypeList(xmlString) {
-    const xmlDoc = xmlDocument(xmlString)
-    const nodeList = xmlDoc.querySelectorAll("complexType")
-    console.log(nodeList)
+  export function nodeListAsComplexTypeArray(nodeList) {
     let complexTypeArray = []
     for (const node of nodeList) {
         if (!node.attributes[0]?.nodeValue)
@@ -129,6 +128,42 @@ export class ElementProperty {
         }
         complexType.setElementProperties(elementPropertyArray)
         complexTypeArray.push(complexType)
+    }
+    return complexTypeArray
+  }
+
+  /**
+   * Returns the schema from describeFetureType.
+   * url must address operation describeFetureType from WFS service
+ * @param {String} url
+ */
+  async function describeFeatureTypeSchema(url) {
+    let res = await fetchData(url)
+    return await res.text()
+  }
+
+  /**
+ * @param {string} xmlString
+ */
+  export async function complexTypeList(xmlString) {
+    const xmlDoc = xmlDocument(xmlString)
+    /**
+       * @type {ComplexType[]}
+       */
+    let complexTypeArray = []
+    let nodeList = xmlDoc.querySelectorAll("complexType")
+    if (nodeList.length == 0) {
+        nodeList = xmlDoc.querySelectorAll("import")
+        for (const node of nodeList) {
+            const url = node.attributes[1]?.nodeValue
+            const a_xmlString = await describeFeatureTypeSchema(url)
+            const a_xmlDoc = xmlDocument(a_xmlString)
+            let nodeList = a_xmlDoc.querySelectorAll("complexType")
+            complexTypeArray = complexTypeArray.concat(nodeListAsComplexTypeArray(nodeList))
+        }
+         
+    } else {
+        complexTypeArray = nodeListAsComplexTypeArray(nodeList)
     }
     return complexTypeArray
   }
