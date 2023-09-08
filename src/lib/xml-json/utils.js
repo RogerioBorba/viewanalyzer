@@ -3,3 +3,4 @@ export function nodeValue(node) {
         return null
     return node['#text'] || node['#cdata-section']
 }
+

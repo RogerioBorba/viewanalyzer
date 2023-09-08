@@ -8,6 +8,7 @@
     let menuWFS = [
       {name: 'Catálogos', href: '/wfs/catalogos'},
       {name: 'Palavras Chaves', href: '/wfs/palavras-chaves'}, 
+      {name: 'Tipo de Feições', href: '/wfs/tipo-de-feicoes'}, 
     ];
 
     let menuCSW = [
@@ -31,10 +32,10 @@
           </a>
       </MegaMenu>
       <NavLi class="cursor-pointer"><Chevron aligned>WFS</Chevron></NavLi>
-      <MegaMenu items={menuWFS} let:item>
-        <a href={item.href} class="flex items-center hover:text-purple-600 dark:hover:text-primary-500">
-          <span class="sr-only">{item.name}</span>
-          <svelte:component this={item.icon} class="w-4 h-4 mr-2" />{item.name}
+      <MegaMenu class="flex items-center" items={menuWFS} let:item>
+        <a href={item.href} class="hover:text-purple-600 dark:hover:text-primary-500 mr-2">
+          <span class="sr-only"> {item.name} </span>
+          <svelte:component this={item.icon} class="w-4 h-4 mr-2" /> {item.name} 
         </a>
         </MegaMenu>
         <NavLi class="cursor-pointer"><Chevron aligned>CSW</Chevron></NavLi>

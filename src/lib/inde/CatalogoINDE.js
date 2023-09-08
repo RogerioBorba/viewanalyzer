@@ -514,6 +514,17 @@ export const catalogos_servicos = [
     "cswGetCapabilities": null
     },
     {
+        "descricao": "IFPI - Instituto Federal do Piauí - Campus Teresina",
+        "url": "https://geoservicos.inde.gov.br/geoserver/IFPI/ows",
+        "nivel_no": null,
+        "wmsAvailable": true,
+        "wfsAvailable": true,
+        "wcsAvailable": true,
+        "wmsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/IFPI/ows?service=wms&request=GetCapabilities&version=1.3.0",
+        "wfsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/IFPI/ows?service=wfs&request=GetCapabilities&version=1.3.0",
+        "wcsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/IFPI/ows?service=wcs&request=GetCapabilities&version=1.3.0"
+    },
+    {
     "descricao": "MAPA - Ministério da Agricultura, Pecuária e Abastecimento",
     "url": "https://geoservicos.inde.gov.br/geoserver/MAPA/ows",
     "wmsAvailable": true,
@@ -670,6 +681,17 @@ export const catalogos_servicos = [
         "wmsGetCapabilities": "http://raster.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/ows?service=wms&request=GetCapabilities&version=1.3.0",
         "wfsGetCapabilities": null,
         "wcsGetCapabilities": null
+    },
+    {
+        "descricao": "Prefeitura Municipal de Santo André",
+        "url": "https://sigamapa.santoandre.sp.gov.br/geoserver/siga/ows",
+        "nivel_no": "Governo local",
+        "wmsAvailable": true,
+        "wfsAvailable": true,
+        "wcsAvailable": true,
+        "wmsGetCapabilities": "https://sigamapa.santoandre.sp.gov.br/geoserver/siga/ows?service=wms&request=GetCapabilities&version=1.3.0",
+        "wfsGetCapabilities": "https://sigamapa.santoandre.sp.gov.br/geoserver/siga/ows?service=wfs&request=GetCapabilities&version=1.3.0",
+        "wcsGetCapabilities": "https://sigamapa.santoandre.sp.gov.br/geoserver/siga/ows?service=wcs&request=GetCapabilities&version=1.3.0"
     },
     {
     "descricao": "SFB - Serviço Florestal do Brasil",
@@ -903,18 +925,39 @@ export const catalogos_servicos = [
     "cswGetCapabilities": "https://metadados.inde.gov.br/geonetwork/srv/por/csw?service=CSW&version=2.0.2&request=GetCapabilities"
     },
     {
-    "descricao": "UFABC/SP - Universidade Federal do ABC ",
-    "sigla": "UFABC",            
-    "url": "https://geoservicos.inde.gov.br/geoserver/UFABC/ows",
-    "wmsAvailable": true,
-    "wfsAvailable": true,
-    "wcsAvailable": true,
-    "wmsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/UFABC/ows?service=wms&request=GetCapabilities&version=1.3.0",
-    "wfsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/UFABC/ows?service=wfs&request=GetCapabilities&version=1.3.0",
-    "wcsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/UFABC/ows?service=wcs&request=GetCapabilities&version=1.3.0",
-    "url_metadados": "https://metadados.inde.gov.br/geonetwork",
-    "cswGetCapabilities": "https://metadados.inde.gov.br/geonetwork/srv/por/csw?service=CSW&version=2.0.2&request=GetCapabilities"
-    },
+        "descricao": "Prefeitura do Município de São Paulo (SP) - vetor",
+        "url": "http://wms.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/ows",
+        "nivel_no": "Governo local",
+        "wmsAvailable": true,
+        "wfsAvailable": false,
+        "wcsAvailable": false,
+        "wmsGetCapabilities": "http://wms.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/ows?service=wms&request=GetCapabilities&version=1.3.0",
+        "wfsGetCapabilities": null,
+        "wcsGetCapabilities": null
+        },
+        {
+        "descricao": "Prefeitura do Município de São Paulo (SP) - raster",
+        "url": "http://raster.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/ows",
+        "nivel_no": "Governo local",
+        "wmsAvailable": true,
+        "wfsAvailable": false,
+        "wcsAvailable": false,
+        "wmsGetCapabilities": "http://raster.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/ows?service=wms&request=GetCapabilities&version=1.3.0",
+        "wfsGetCapabilities": null,
+        "wcsGetCapabilities": null
+        },
+        {
+            "descricao": "Prefeitura Municipal de Santo André",
+            "url": "https://sigamapa.santoandre.sp.gov.br/geoserver/siga/ows",
+            "nivel_no": "Governo local",
+            "wmsAvailable": true,
+            "wfsAvailable": true,
+            "wcsAvailable": true,
+            "wmsGetCapabilities": "https://sigamapa.santoandre.sp.gov.br/geoserver/siga/ows?service=wms&request=GetCapabilities&version=1.3.0",
+            "wfsGetCapabilities": "https://sigamapa.santoandre.sp.gov.br/geoserver/siga/ows?service=wfs&request=GetCapabilities&version=1.3.0",
+            "wcsGetCapabilities": "https://sigamapa.santoandre.sp.gov.br/geoserver/siga/ows?service=wcs&request=GetCapabilities&version=1.3.0"
+        },
+    
     {
         "descricao": "FMADS - Fundação Municipal do Meio Ambiente e Desenvolvimento Sustentável de São José / SC",
         "sigla": "FMADS",
@@ -927,7 +970,20 @@ export const catalogos_servicos = [
         "wcsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/SCSJFMADS/ows?service=wcs&request=GetCapabilities&version=1.3.0",
         "url_metadados": "https://metadados.inde.gov.br/geonetwork",
         "cswGetCapabilities": "https://metadados.inde.gov.br/geonetwork/srv/por/csw?service=CSW&version=2.0.2&request=GetCapabilities"
-    }
+    },
+    {
+        "descricao": "UFABC/SP - Universidade Federal do ABC ",
+        "sigla": "UFABC",            
+        "url": "https://geoservicos.inde.gov.br/geoserver/UFABC/ows",
+        "wmsAvailable": true,
+        "wfsAvailable": true,
+        "wcsAvailable": true,
+        "wmsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/UFABC/ows?service=wms&request=GetCapabilities&version=1.3.0",
+        "wfsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/UFABC/ows?service=wfs&request=GetCapabilities&version=1.3.0",
+        "wcsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/UFABC/ows?service=wcs&request=GetCapabilities&version=1.3.0",
+        "url_metadados": "https://metadados.inde.gov.br/geonetwork",
+        "cswGetCapabilities": "https://metadados.inde.gov.br/geonetwork/srv/por/csw?service=CSW&version=2.0.2&request=GetCapabilities"
+        },
     ]
     
     export const catalogosWMSCapabilities =  catalogos_servicos.map((catalogo) => { return catalogo.wmsGetCapabilities});

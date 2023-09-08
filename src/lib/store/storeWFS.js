@@ -5,3 +5,4 @@ export let countWFSProcessado = writable(0);
 export let allWFSKeywords = writable([]);
 export let keywordWFSCountByName = writable({});
 export let currentListWFSCapability = writable([]);
+export let currentListComplexType = writable([]);

@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite  dev",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
@@ -25,6 +25,7 @@
 	"dependencies": {
 		"flowbite-svelte": "^0.34.9",
 		"ol": "^8.0.0",
+		"undici": "^5.23.0",
 		"xmldom": "^0.6.0"
 	}
 }

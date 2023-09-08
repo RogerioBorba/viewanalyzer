@@ -1,4 +1,4 @@
-export async function fetchData(url: string, controllerSignal: object) {
+export async function fetchData(url: string, controllerSignal: object ) {
     try {
         console.log(`fech local - ${url}`)
         const res = await fetch(url, controllerSignal)
