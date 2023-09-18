@@ -41,13 +41,13 @@ export const catalogos_servicos = [
     {
     "descricao": "ANP - Agência Nacional do Petróleo, Gás Natural e Biocombustíveis",
     "sigla": "ANP",
-    "url": "http://app.anp.gov.br/geoserver/ows",
+    "url": "https://app.anp.gov.br/geoserver/ows",
     "wmsAvailable": true,
     "wfsAvailable": true,
     "wcsAvailable": true,
-    "wmsGetCapabilities": "http://gishub.anp.gov.br/geoserver/ows?service=wms&request=GetCapabilities&version=1.3.0",
-    "wfsGetCapabilities": "http://gishub.anp.gov.br/geoserver/ows?service=wfs&request=GetCapabilities&version=2.0.0",
-    "wcsGetCapabilities": "http://gishub.anp.gov.br/geoserver/ows?service=wcs&request=GetCapabilities&version=1.3.0",
+    "wmsGetCapabilities": "https://gishub.anp.gov.br/geoserver/ows?service=wms&request=GetCapabilities&version=1.3.0",
+    "wfsGetCapabilities": "https://gishub.anp.gov.br/geoserver/ows?service=wfs&request=GetCapabilities&version=2.0.0",
+    "wcsGetCapabilities": "https://gishub.anp.gov.br/geoserver/ows?service=wcs&request=GetCapabilities&version=1.3.0",
     "url_metadados": "https://metadados.inde.gov.br/geonetwork",
     "cswGetCapabilities": "https://metadados.inde.gov.br/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetCapabilities"
     },

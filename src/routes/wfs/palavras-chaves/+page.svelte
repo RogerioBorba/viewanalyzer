@@ -12,6 +12,11 @@
     let nameCatalog = ''
     let adressCatalog =''
     let disableButtonAddNewCatalog = true
+    import {bodyToPdf} from '$lib/component/pdf/gerarPDF';
+    
+    function gerarPDF() {
+        bodyToPdf()
+    }
     $: qtdCatalog = selectedItems.length
     $:  disableButtonAddNewCatalog = (nameCatalog.length == 0 || adressCatalog.length == 0)? true: false
     const newObjIdDescricaoIRI = (obj) => {
@@ -37,6 +42,7 @@
         checked = !checked
     }
     
+
     async function btnSearchClicked() {
         if (selectedItems.length == 0)
             return alert( 'Escolha pelo menos uma instituição')

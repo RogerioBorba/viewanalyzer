@@ -3,6 +3,8 @@
     import WMSLayerCard from '$lib/component/wms/WMSLayerCard.svelte'
     import {WMSLayer} from '$lib/component/wms/WMSLayer'
     import { onMount } from 'svelte';
+    import Pdf from "$lib/component/pdf/pdf.svelte";   
+
     import { Navbar, NavBrand, Dropdown, DropdownHeader, Avatar, DropdownItem, DropdownDivider, NavUl, NavHamburger, NavLi } from 'flowbite-svelte';
     let wmsLayers = []
     let textEntered = null
@@ -11,7 +13,7 @@
     let withoutMetadadaChecked = false
     let withoutKeywordChecked = false
     let nameEqualTitleChecked = false
-
+    let dom = null;
     let avatar = ''
     onMount(async () => {
         let current = await $currentListWMSCapability
@@ -79,6 +81,7 @@
         
     </div>
 </div>
+<Pdf elementHTML = {dom?dom.body: null}></Pdf>
 <div class = "m-2 grid gap-2 md:grid-cols-3 grid-cols-1">
     {#each filteredWMSLayers as wmsLayer (wmsLayer.oid)}
         <WMSLayerCard wmsLayer={wmsLayer}></WMSLayerCard>

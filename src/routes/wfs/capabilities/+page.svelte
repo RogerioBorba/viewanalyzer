@@ -2,6 +2,7 @@
     import {currentListWFSCapability} from '$lib/store/storeWFS';
     import WFSLayerCard from '$lib/component/wfs/WFSLayerCard.svelte';
     import { WFSLayer } from '$lib/component/wfs/WFSLayer';
+    import Pdf from "$lib/component/pdf/pdf.svelte";   
     import { onMount } from 'svelte';
     import { Navbar, NavBrand, Dropdown, DropdownHeader, Avatar, DropdownItem, DropdownDivider, NavUl, NavHamburger, NavLi } from 'flowbite-svelte';
     let wfsLayers = []
@@ -11,9 +12,10 @@
     let withoutMetadadaChecked = false
     let withoutKeywordChecked = false
     let nameEqualTitleChecked = false
-
+    let dom = null;
     let avatar = ''
     onMount(async () => {
+        dom = document
         let current = await $currentListWFSCapability
         let i = 1
         if (!current)
@@ -60,7 +62,7 @@
     }     
     
 </script>
-
+<Pdf elementHTML = {dom?dom.body: null}></Pdf>
 <div class="m-2 flex md:flex-row flex-col justify-center md:justify-start md:items-center">
     <input class= "m-1 p-1 w-1/4" type="text" bind:value={textEntered} placeholder="Digite para filtrar">
     <div>
