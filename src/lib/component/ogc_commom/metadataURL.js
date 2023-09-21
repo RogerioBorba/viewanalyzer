@@ -5,7 +5,7 @@ export class MetadataURL {
     }
     
     type() {
-        return this.metadataObject['@attributes']['type']
+        return this.metadataObject['@attributes']?.['type']
     }
 
     contentType() {

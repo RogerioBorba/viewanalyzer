@@ -1,11 +1,13 @@
-<script lang="ts">
+<script>
     import {currentListWFSCapability} from '$lib/store/storeWFS';
     import WFSLayerCard from '$lib/component/wfs/WFSLayerCard.svelte';
     import { WFSLayer } from '$lib/component/wfs/WFSLayer';
-    import Pdf from "$lib/component/pdf/pdf.svelte";   
+    import Pdf from "$lib/component/pdf/pdfHTML.svelte";   
     import { onMount } from 'svelte';
     import { Navbar, NavBrand, Dropdown, DropdownHeader, Avatar, DropdownItem, DropdownDivider, NavUl, NavHamburger, NavLi } from 'flowbite-svelte';
+    import PdfJsObject from '$lib/component/pdf/pdfJSObject.svelte';
     let wfsLayers = []
+    let wfsLayersAsJson = []
     let textEntered = null
     let filteredWFSLayers = []
     let withMetadadaChecked = false
@@ -58,11 +60,26 @@
             filteredWFSLayers = filteredWFSLayers.filter(e =>  e.metadataURLs().length > 0 )
             withoutMetadadaChecked = false
         }
-
+        if (filteredWFSLayers.length > 0)
+            wfsLayersAsJson = filteredWFSLayers.map(wfsLayer => { return toJsonObject(wfsLayer)})
     }     
-    
+
+    /**
+     * @param {{ name: () => any; title: () => any; keywordsString: () => any; defaultSRSString: () => any; typeMetadataString: () => any; }} wfsLayer
+     */
+    function toJsonObject(wfsLayer) {
+        return {
+                "Nome": wfsLayer.name(), 
+                "Título": wfsLayer.title(), 
+                "Palavras chaves": wfsLayer.keywordsString(),
+                "Default SRS": wfsLayer.defaultSRSString(),
+                "Tipos de Metadados": wfsLayer.typeMetadataString()
+            }
+
+    }
+
 </script>
-<Pdf elementHTML = {dom?dom.body: null}></Pdf>
+<PdfJsObject listJsonObject = {wfsLayersAsJson} header={""} ></PdfJsObject>
 <div class="m-2 flex md:flex-row flex-col justify-center md:justify-start md:items-center">
     <input class= "m-1 p-1 w-1/4" type="text" bind:value={textEntered} placeholder="Digite para filtrar">
     <div>
@@ -86,6 +103,7 @@
         
     </div>
 </div>
+
 <div class = "m-2 grid gap-2 md:grid-cols-3 grid-cols-1">
     {#each filteredWFSLayers as wfsLayer (wfsLayer.oid)}
         <WFSLayerCard wfsLayer={wfsLayer}></WFSLayerCard>

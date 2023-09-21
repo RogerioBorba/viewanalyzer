@@ -1,8 +1,33 @@
 import { BaseLayer } from "$lib/component/base/BaseLayer";
-import {MetadataURL} from '$lib/component/ogc_commom/metadataURL.js';
 
 function nodeValue(node) {
     return node['#text'] || node['#cdata-section']
+}
+class MetadataURL {
+    // metadataObject is json object from WxS capabilities['MetadataURL']
+    constructor(metadataObject) {
+        this.metadataObject = metadataObject
+    }
+    
+    type() {
+        return this.metadataObject['@attributes']?.['type'] || 'Sem informação'
+    }
+
+    contentType() {
+        return nodeValue(this.metadataObject['Format'])
+    }
+
+    link() {
+        let lnk = this.metadataObject['#text']
+        if(!lnk)
+            return this.metadataObject['@attributes']['xlink:href']
+        return lnk
+    }
+
+    linkType() {
+        return this.metadataObject['@attributes']['xlink:type'] 
+    }
+
 }
 export class WFSLayer extends BaseLayer {
     
@@ -38,9 +63,9 @@ export class WFSLayer extends BaseLayer {
             return []
 
         if (Array.isArray(metadataObjs))
-            return metadataObjs.map(metadata => metadata['#text'] || metadata['cdata-section'] )
+            return metadataObjs.map(metadata => new MetadataURL(metadata))
         else
-            return [metadataObjs['#text'] || metadataObjs['cdata-section'] ]
+            return [new MetadataURL(metadataObjs) ]
         
         
     }
@@ -55,12 +80,15 @@ export class WFSLayer extends BaseLayer {
         if (!this.layerCapability.MetadataURL)
             return null
 
-        return this.layerCapability.MetadataURL["@attributes"].type
+        return this.layerCapability.MetadataURL["@attributes"].type || 'Não informado'
 
     }
 
     defaultSRS() {
-        return this.layerCapability.DefaultSRS["#text"]
+        let srs = this.layerCapability.DefaultSRS?.["#text"]
+        if (!srs)
+            srs = this.layerCapability.DefaultCRS?.["#text"]
+        return srs
     }
 
     keywords() {
@@ -74,6 +102,24 @@ export class WFSLayer extends BaseLayer {
             else
                 return keywords['#text'] || keywords['cdata-section']
         return null
+    }
+
+    keywordsString() {
+        
+        return (this.keywords())? this.keywords(): 'Não há palavras chaves'
+    }
+    
+    defaultSRSString() {
+        if (!this.defaultSRS())
+            return ''
+        return this.defaultSRS().toString()
+    }
+    
+    typeMetadataString() {
+        if (this.metadataURLs().length == 0)
+            return "SEM METADADOS"
+        const list_meta = this.metadataURLs().map(metada => metada.type())
+        return list_meta
     }
 
 }

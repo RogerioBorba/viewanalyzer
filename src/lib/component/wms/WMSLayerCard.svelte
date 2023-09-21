@@ -22,12 +22,12 @@
     }
     
 </script>
-    <div class="p-2 bg-gray-200  text-gray-800 rounded-md shadow-sm hover:shadow-md flex flex-col break-words text-sm text-left">
-        <h2> <span class="font-semibold">Nome:</span> {wmsLayer.name()}</h2>
-        <h2> <span class="font-semibold">Título:</span> {wmsLayer.title()}</h2>
-        <h2> <span class="font-semibold">Palavras chaves: </span>{keywordsString()}</h2>
-        <h2> <span class="font-semibold">Estilo:</span> {stylesAsString()}</h2>
-        <h2> <span class="font-semibold">CRSs:</span> {crssAsString()}</h2>
+    <div class="font-semibold p-2 bg-gray-200  text-gray-800 rounded-md shadow-sm hover:shadow-md flex flex-col break-words text-sm text-left">
+        <h2> <span >Nome:</span> {wmsLayer.name()}</h2>
+        <h2> <span >Título:</span> {wmsLayer.title()}</h2>
+        <h2> <span >Palavras chaves: </span>{keywordsString()}</h2>
+        <h2> <span >Estilo:</span> {stylesAsString()}</h2>
+        <h2> <span >CRSs:</span> {crssAsString()}</h2>
        <!-- <h2><a class= "text-blue-500 underline underline-offset-4" href={wmsLayer.style().legendGraphic().link()}>Link legenda</a></h2> -->
         {#if metadados }
             {#each metadados as metadata}
