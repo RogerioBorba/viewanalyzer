@@ -10,6 +10,7 @@ export const POST = async ({ request }) =>  {
     console.log("BODY:", data["body"])
     console.log("content_type", data["content_type"])
     console.log("-----------------------------------------------------------")
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
     const res = await fetch( data["url"], { method: "POST", body: data["body"], headers: {"Content-type": data["content_type"], agent: new Agent({ rejectUnauthorized: false }), }})
     if (res.status == 403) {
       console.log("Servidor não aceita POST")

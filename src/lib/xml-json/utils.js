@@ -4,3 +4,12 @@ export function nodeValue(node) {
     return node['#text'] || node['#cdata-section']
 }
 
+/**
+ * @param {string} xmlString
+ */
+export function xmlDocument(xmlString) {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+    return xmlDoc
+
+  }

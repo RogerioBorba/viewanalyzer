@@ -12,10 +12,10 @@
     let nameCatalog = ''
     let adressCatalog =''
     let disableButtonAddNewCatalog = true
-    import {bodyToPdf} from '$lib/component/pdf/gerarPDF';
+    //import {bodyToPdf} from '$lib/component/pdf/gerarPDF';
     
     function gerarPDF() {
-        bodyToPdf()
+       // bodyToPdf()
     }
     $: qtdCatalog = selectedItems.length
     $:  disableButtonAddNewCatalog = (nameCatalog.length == 0 || adressCatalog.length == 0)? true: false
