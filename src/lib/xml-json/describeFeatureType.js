@@ -68,7 +68,7 @@ export class ElementProperty {
      */
     constructor(maxOccurs, minOccurs, name, nillable, typeVar) {
         this.maxOccurs = maxOccurs
-        this.minOcurrs = minOccurs
+        this.minOccurs = minOccurs
         this.name = name
         this.nillable = nillable
         this.typeVar = this.removerPrefixo(typeVar)
@@ -135,7 +135,9 @@ export class ElementProperty {
   /**
    * Returns the schema from describeFetureType.
    * url must address operation describeFetureType from WFS service
- * @param {String} url
+   * @returns {Promise<string>}
+   * @param {String} url
+ 
  */
   async function describeFeatureTypeSchema(url) {
     let res = await fetchData(url)

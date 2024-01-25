@@ -47,7 +47,7 @@
         //currentListComplexType.set(complexArray)
         currentFeatureTypeElements.set(featureTypeElements)
         currentWFSGetCapabilities.set(objIdDescricaoIri.iri)
-        goto("\schema-feature-type")
+        goto("/wfs/tipo-de-feicoes/schema-feature-type")
     }
 </script>
 <div class= "p-2 {bgColor} text-sm text-left text-gray-800  rounded-md shadow-sm hover:shadow-md flex flex-col"  transition:fade>

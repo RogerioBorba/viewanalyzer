@@ -18,29 +18,50 @@
     let progress_color =  'text-gray-600';
     let progress_bin = 0.0;
     
+    function complexTypeAsCsvString(complexType) {
+        let csvString = ''
+        complexType.elementProperties.forEach(elementProperty => {
+            csvString += complexType.name + ';' + 
+                         elementProperty.name + ';' + 
+                         elementProperty.typeVar + ';' + 
+                         `${elementProperty.minOccurs}..${elementProperty.maxOccurs}` + ';' + 
+                         '\n';
+        });
+        return  csvString 
+    }
+
+    function listaComplexTypeAsCSV() {
+        let csvFile = 'nome_feicao;atributo;tipo;multiplicidade\n';
+        listaComplexType.forEach(complexType => {
+            csvFile += complexTypeAsCsvString(complexType);
+        });
+        return csvFile
+    }
     function csvClicked() {
         // Cria um Blob com o conteúdo CSV
-        const lista = listaComplexType.map(complexType => toJsonObject(complexType))
-        console.log(lista)
-        const blob = new Blob([listaComplexType], { type: 'text/csv;charset=utf-8;' });
-
+        //const lista = listaComplexType //.map(complexType => toJsonObject(complexType))
+        const csvFile = listaComplexTypeAsCSV()
+        const blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+        const filename = 'tipo_feicao.csv'
         // Cria um link de download
-        const linkDownload = document.createElement('a');
-        linkDownload.href = URL.createObjectURL(blob);
-        linkDownload.download = 'tipo_feicao.csv';
-
-        // Adiciona o link ao documento e aciona o clique
-        document.body.appendChild(linkDownload);
-        linkDownload.click();
-
-        // Remove o link do documento
-        document.body.removeChild(linkDownload);
+        let link = document.createElement("a");
+        if (link.download !== undefined) { // feature detection
+            // Browsers that support HTML5 download attribute
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     }
+
     function pdfClicked() {
+        
         const lista = listaComplexType.map(complexType => toJsonObject(complexType))
         dataToPdf(lista, '')
     }
-    
     
     function toJsonObject(complexType) {
         const attributes = complexType.elementProperties
@@ -50,13 +71,13 @@
             const attribute = attributes[j];
             const attributeName = attribute.name;
             const attributeType = attribute.typeVar;
-            const minOccurs = attribute.minOcurrs;
+            const minOccurs = attribute.minOccurs;
             const maxOccurs = attribute.maxOccurs;
             objToPdf[`${attributeName}`] = (`${attributeType}[${minOccurs}..${maxOccurs}]`);
         }
-        console.log(JSON.stringify(objToPdf))
+        //console.log(JSON.stringify(objToPdf))
         return objToPdf
-        console.log(JSON.stringify(complexType, null, 2))
+        //console.log(JSON.stringify(complexType, null, 2))
         return {"Tipo de feição": complexType.name}
     }
         
@@ -128,6 +149,7 @@
         <!--<Button class= "mx-2" size="sm" on:click={csvClicked}>CSV</Button>-->
         
         <Button size="sm" on:click={pdfClicked}>PDF</Button>
+        <Button size="sm" on:click={csvClicked}>CSV</Button>
 
       <NavHamburger />
     </div>
