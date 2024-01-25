@@ -1,11 +1,12 @@
 <script>
-    import { Progressbar, Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button, Input  } from 'flowbite-svelte';
+    import { Progressbar, Navbar,  NavLi, NavUl, NavHamburger, Button  } from 'flowbite-svelte';
     import { onMount } from "svelte";
     import { currentFeatureTypeElements, currentWFSGetCapabilities } from '$lib/store/storeWFS';
     import  WFSComplexTypeCard from '$lib/component/wfs/WFSComplexTypeCard.svelte'
     import { fetchData } from "$lib/request/requestData";
     import { complexTypeList } from '$lib/xml-json/describeFeatureType';
-    import {dataToPdf} from '$lib/component/pdf/gerarPDF'
+    import {dataToPdf} from '$lib/component/pdf/gerarPDF';
+    import { json2csv } from 'json-2-csv';
     /*** @type {any[]}*/
     let listaComplexType = [];
     /*** @type {any[]}*/
@@ -17,25 +18,44 @@
     let progress_color =  'text-gray-600';
     let progress_bin = 0.0;
     
+    function csvClicked() {
+        // Cria um Blob com o conteúdo CSV
+        const lista = listaComplexType.map(complexType => toJsonObject(complexType))
+        console.log(lista)
+        const blob = new Blob([listaComplexType], { type: 'text/csv;charset=utf-8;' });
+
+        // Cria um link de download
+        const linkDownload = document.createElement('a');
+        linkDownload.href = URL.createObjectURL(blob);
+        linkDownload.download = 'tipo_feicao.csv';
+
+        // Adiciona o link ao documento e aciona o clique
+        document.body.appendChild(linkDownload);
+        linkDownload.click();
+
+        // Remove o link do documento
+        document.body.removeChild(linkDownload);
+    }
     function pdfClicked() {
-        alert("asaosajsaosa")
         const lista = listaComplexType.map(complexType => toJsonObject(complexType))
         dataToPdf(lista, '')
     }
     
+    
     function toJsonObject(complexType) {
         const attributes = complexType.elementProperties
-        /*let objToPdf = {}
+        let objToPdf = {}
         objToPdf["Tipo de feição"] = complexType.name
         for (let j = 0; j < attributes.length; j++) {
             const attribute = attributes[j];
-            const attributeName = attribute.getAttribute('name');
-            const attributeType = attribute.getAttribute('type');
-            const minOccurs = attribute.getAttribute('minOccurs');
-            const maxOccurs = attribute.getAttribute('maxOccurs');
-            objToPdf.attributeName = (`${attributeName} : ${attributeType}[${minOccurs}..${maxOccurs}]`);
+            const attributeName = attribute.name;
+            const attributeType = attribute.typeVar;
+            const minOccurs = attribute.minOcurrs;
+            const maxOccurs = attribute.maxOccurs;
+            objToPdf[`${attributeName}`] = (`${attributeType}[${minOccurs}..${maxOccurs}]`);
         }
-        return objToPdf*/
+        console.log(JSON.stringify(objToPdf))
+        return objToPdf
         console.log(JSON.stringify(complexType, null, 2))
         return {"Tipo de feição": complexType.name}
     }
@@ -105,7 +125,8 @@
 </script>
 <Navbar>
     <div class="flex md:order-2">
-      
+        <!--<Button class= "mx-2" size="sm" on:click={csvClicked}>CSV</Button>-->
+        
         <Button size="sm" on:click={pdfClicked}>PDF</Button>
 
       <NavHamburger />
