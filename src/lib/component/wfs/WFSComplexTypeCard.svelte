@@ -9,7 +9,7 @@
     
     
     function formatProperty(elementProperty) {
-        return `${elementProperty.name} :  ${elementProperty.typeVar}[${elementProperty.minOcurrs}..${elementProperty.maxOccurs}]`
+        return `${elementProperty.name} :  ${elementProperty.typeVar}[${elementProperty.minOccurs}..${elementProperty.maxOccurs}]`
     }
 </script>
 <div class= "font-semibold p-2 {bgColor} text-sm text-left text-gray-800  rounded-md shadow-sm hover:shadow-md flex flex-col"  transition:fade>

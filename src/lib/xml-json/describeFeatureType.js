@@ -31,7 +31,7 @@ export class ComplexType {
         // Verifica se a string termina com a palavra "Type"
         if (str && str.endsWith("Type")) {
         // Remove "Type" do final da string
-        return str.slice(0, -4);
+            return str.slice(0, -4);
         }
         // Se a string não terminar com "Type", retorna a string original
         return str;
@@ -87,14 +87,25 @@ export class ElementProperty {
 }
 
 /**
- * @param {string} xmlString
+ * Converte uma string XML em um objeto Document usando DOMParser.
+ *
+ * @param {string} xmlString - A string contendo um documento XML.
+ * @returns {Document} - Um objeto Document representando o documento XML analisado.
+ * @throws {DOMException} - Lança uma exceção se ocorrer um erro durante a análise XML.
  */
-  function xmlDocument(xmlString) {
+function xmlDocument(xmlString) {
+    /**
+     * @type {DOMParser}
+     */
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
-    return xmlDoc
 
-  }
+    /**
+     * @type {Document}
+     */
+    const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+    return xmlDoc;
+}
+
   
   /**
  * @param {NodeList} nodeList
