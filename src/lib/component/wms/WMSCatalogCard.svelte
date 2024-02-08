@@ -23,7 +23,7 @@
     
     function linkClicked() {
         currentListWMSCapability.set(wmsCapabilities)
-        goto("\capabilities")
+        goto("/wms/capabilities")
     }
     function initializeVariablesOnMount() {
         if (!wmsCapabilities) {
