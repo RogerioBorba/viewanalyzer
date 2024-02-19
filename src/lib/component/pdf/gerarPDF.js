@@ -60,3 +60,27 @@ export function dataToPdf(elements) {
 
     pdf.save("relatorio.pdf");
 }
+
+
+export function bodyToPDF(anElementHTML) {
+    const doc = new jsPDF('p', 'pt', 'letter');
+
+    console.log("Gerando pdf...");
+    const elementHTML = anElementHTML || document.body;
+
+    doc.html(elementHTML, {
+        callback: function(doc) {
+            // Save the PDF
+
+            doc.save('doc.pdf');
+        },
+
+        margin: [10, 10, 10, 10],
+        autoPaging: 'html',
+        x: 0,
+        y: 0,
+        width: 550, //target width in the PDF document
+        windowWidth: 900 //window width in CSS pixels
+
+    });
+};
