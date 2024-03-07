@@ -6,6 +6,7 @@
     import { onMount } from 'svelte';
     import { Navbar, NavBrand, Dropdown, DropdownHeader, Avatar, DropdownItem, DropdownDivider, NavUl, NavHamburger, NavLi } from 'flowbite-svelte';
     import PdfJsObject from '$lib/component/pdf/pdfJSObject.svelte';
+  import WfsCsv from '$lib/component/csv/wfsCSV.svelte';
     let wfsLayers = []
     let wfsLayersAsJson = []
     let textEntered = null
@@ -64,42 +65,60 @@
             wfsLayersAsJson = filteredWFSLayers.map(wfsLayer => { return toJsonObject(wfsLayer)})
     }     
 
+
+
     /**
-     * @param {{ name: () => any; title: () => any; keywordsString: () => any; defaultSRSString: () => any; typeMetadataString: () => any; }} wfsLayer
+     * @param {{ name: () => any; title: () => any; keywordsString: () => any; defaultSRSString: () => any; typeMetadataString: () => any; metadataLink:() => any }} wfsLayer
      */
     function toJsonObject(wfsLayer) {
+        console.log(JSON.stringify(wfsLayer))
         return {
                 "Nome": wfsLayer.name(), 
                 "Título": wfsLayer.title(), 
-                "Palavras chaves": wfsLayer.keywordsString(),
+                "Palavras-chaves": wfsLayer.keywordsString(),
                 "Default SRS": wfsLayer.defaultSRSString(),
-                "Tipos de Metadados": wfsLayer.typeMetadataString()
+                "Tipo do Metadado": wfsLayer.metadataLink() ? wfsLayer.typeMetadataString() : 'Sem metadado associado',
+                "Link do Metadado": wfsLayer.metadataLink() ?  wfsLayer.metadataLink() : 'Sem metadaddo associado',
+                
             }
 
     }
 
 </script>
-<PdfJsObject listJsonObject = {wfsLayersAsJson} header={""} ></PdfJsObject>
+
 <div class="m-2 flex md:flex-row flex-col justify-center md:justify-start md:items-center">
-    <input class= "m-1 p-1 w-1/4" type="text" bind:value={textEntered} placeholder="Digite para filtrar">
+
+    <div class="flex md:flex-row justify-start">
+        <NavUl class="order-1">
+            <NavLi href="/" active={true}>Home</NavLi>
+        </NavUl>
+    </div>
+
+    <input class= "m-1 p-1 w-1/4 mr-2" type="text" bind:value={textEntered} placeholder="Digite para filtrar">
     <div>
-        <input type="checkbox" bind:checked={withMetadadaChecked}>
-        <span class="mr-5">Com metadado associado</span>
+        <input class="mr-2" type="checkbox" bind:checked={withMetadadaChecked}>
+        <span class="mr-2">Com metadado associado</span>
     </div>
     <div>
-        <input type="checkbox" bind:checked={withoutMetadadaChecked}>
-        <span class="mr-5">Sem metadado associado</span>
+        <input class="mr-2" type="checkbox" bind:checked={withoutMetadadaChecked}>
+        <span class="mr-2">Sem metadado associado</span>
     </div>
     <div>
-        <input type="checkbox" bind:checked={withoutKeywordChecked}>
-        <span class="mr-5">Sem palavra chave</span>
+        <input class="mr-2" type="checkbox" bind:checked={withoutKeywordChecked}>
+        <span class="mr-2">Sem palavra chave</span>
     </div>
     <div>
-        <input type="checkbox" bind:checked={nameEqualTitleChecked}>
+        <input class="mr-2" type="checkbox" bind:checked={nameEqualTitleChecked}>
         <span class="mr-5">Nome igual ao título</span>
     </div>
-    <div>
+    <div class="mr-10">
         <p>Qtd : {filteredWFSLayers.length}</p>
+        
+    </div>
+
+    <div class="flex ml-12 space-x-0">
+        <PdfJsObject listJsonObject = {wfsLayersAsJson} header={""} ></PdfJsObject>
+        <WfsCsv wfsArrayToCSV = {wfsLayersAsJson}></WfsCsv>
         
     </div>
 </div>

@@ -23,7 +23,7 @@
     
     function linkClicked() {
         currentListWFSCapability.set(wfsCapabilities)
-        goto("\capabilities")
+        goto("/wfs/capabilities")
     }
     function initializeVariablesOnMount() {
         if (!wfsCapabilities) {

@@ -8,54 +8,32 @@ import {jsPDF} from "jspdf"
  */
 
 export function dataToPdf(elements) {
-    /**
-     * Gera um documento PDF com os elementos fornecidos.
-     *
-     * @param {Array<Object>} elements - Um array de objetos a serem incluídos no PDF.
-     * @returns {jsPDF} - A instância jsPDF gerada.
-     */
-
     let pdf = new jsPDF();
-
-
-    /**
-     * Posição vertical para adicionar uma nova linha
-     * @type {number}
-     * @description Valor inicial da posição Y no PDF
-     */
     let y = 5;
-
     const pageHeight = pdf.internal.pageSize.height;
-
     pdf.setFont("courier", "bold");
     pdf.setFontSize(10);
+    const lineSpacing = 4;
 
     for (const objeto of elements) {
-        // Iterando sobre as chaves e valores de cada objeto
         for (const [chave, valor] of Object.entries(objeto)) {
-            // Obtendo a altura do texto
-            const textHeight = pdf.getTextDimensions(`${chave}: ${valor}`).h;
+            let text = `${chave}: ${valor}`;
+            let textLines = pdf.splitTextToSize(text, 190);
 
-            // Verifica se existe espaço para adicionar uma nova linha, se não, uma nova página e adicionada
-            if (y + textHeight > pageHeight) {
+            if (y + (textLines.length * 5) > pageHeight) {
                 pdf.addPage();
-                // Reinicia a posição Y na nova página
-                y = 5; 
+                y = 5;
             }
 
-
-            // Adiciona um retângulo colorido como background para cada linha
             pdf.setFillColor(240, 240, 240);
+            pdf.rect(10, y - 3, 190, pdf.getTextDimensions(textLines).h + 8, 'F');
+            pdf.text(textLines, 10, y);
 
-            // Ajuste as coordenadas e dimensões conforme necessário
-            pdf.rect(10, y - 3, 190, textHeight + 3, 'F'); 
-
-            // Adiciona o texto
-            pdf.text(`${chave}: ${valor}`, 10, y);
-            y+= textHeight+3
+            // Atualiza a posição Y para a próxima linha
+            y += pdf.getTextDimensions(textLines).h + lineSpacing;
         }
-        // Adciona uma "margem inferior" aos elementos que não pertecem ao mesmo bloco no laço for
-        y+=10
+
+        y += 10;
     }
 
     pdf.save("relatorio.pdf");
@@ -64,23 +42,26 @@ export function dataToPdf(elements) {
 
 export function bodyToPDF(anElementHTML) {
     const doc = new jsPDF('p', 'pt', 'letter');
-
-    console.log("Gerando pdf...");
     const elementHTML = anElementHTML || document.body;
+    const buttons = document.querySelectorAll('button');
+    
+    // Esconde os botões temporariamente
+    buttons.forEach(button => button.style.display = 'none');
 
     doc.html(elementHTML, {
         callback: function(doc) {
-            // Save the PDF
-
+            // Salva o PDF
             doc.save('doc.pdf');
+
+            // Restaura a exibição dos botões
+            buttons.forEach(button => button.style.display = '');
         },
 
         margin: [10, 10, 10, 10],
         autoPaging: 'html',
         x: 0,
         y: 0,
-        width: 550, //target width in the PDF document
-        windowWidth: 900 //window width in CSS pixels
-
+        width: 550, // Largura alvo no documento PDF
+        windowWidth: 900 // Largura da janela em pixels CSS
     });
 };

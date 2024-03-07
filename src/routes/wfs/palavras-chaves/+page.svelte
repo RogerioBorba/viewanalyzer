@@ -3,6 +3,12 @@
     import {countTotalLayerWFS, countWFSProcessado, keywordWFSCountByName, allWFSKeywords} from '$lib/store/storeWFS'
     import Navbar from '$lib/component/base/navbar.svelte'
     import WFSKeywordCard from '$lib/component/wfs/WFSKeywordCard.svelte';
+    import PdfJsObject from '$lib/component/pdf/pdfJSObject.svelte';
+  import BaseSelectedLayer from '$lib/component/base/selected_layer/BaseSelectedLayer.svelte';
+  import { onDestroy } from 'svelte';
+  import WfsCsv from '$lib/component/csv/wfsCSV.svelte';
+  import {dataToPdf} from '$lib/component/pdf/gerarPDF'
+  import {keywordsToCSV} from '$lib/component/csv/gerarCSV'
     
     let selectedItems = [] // {id: number, descricao: string, iri: string}[];
     let selectedCatalogs = []
@@ -41,17 +47,33 @@
         }
         checked = !checked
     }
-    
+
+    $: items = [];
+    let unsubscribe;
 
     async function btnSearchClicked() {
         if (selectedItems.length == 0)
-            return alert( 'Escolha pelo menos uma instituição')
-        //$keywordWFSCountByName= {} 
-        $allWFSKeywords=[]
-        $countTotalLayerWFS = 0 
-        $countWFSProcessado = 0
-        selectedCatalogs = selectedCatalogs.concat(selectedItems)        
+            return alert('Escolha pelo menos uma instituição');
+
+        $allWFSKeywords = [];
+        $countTotalLayerWFS = 0;
+        $countWFSProcessado = 0;
+        selectedCatalogs = selectedCatalogs.concat(selectedItems);
+
+        unsubscribe = keywordWFSCountByName.subscribe((value) => {
+            items = Object.keys(value).map(key => {
+                return { palavra_chave: key, quantidade: value[key] };
+            });
+        });
     }
+
+    onDestroy(() => {
+        if (unsubscribe) {
+            unsubscribe();
+        }
+    });
+    
+    
 </script>
 <Navbar brand="OGC/WFS Checker"></Navbar>
 <form class="m-2">
@@ -76,10 +98,27 @@
             </option>
         {/each}
     </select>
-    <div class="mt-2 w-full p1 flex flex-col md:flex-row">
+    <div class="mt-2 w-full h-14 p1 flex flex-col md:flex-row">
         <input class="border-gray-300 focus:outline-none w-full rounded md:w-2/5 mr-1" type="text"  bind:value={nameCatalog} placeholder="Informe o nome do catálogo"> 
         <input class="border-gray-300 focus:outline-none rounded w-full md:w-2/5 mr-1" type="text"  bind:value={adressCatalog} placeholder="Informe o endereço/link WMS do GetCapabilities"> 
-        <button class=" md:w-1/5 shadow-sm rounded bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 disabled:opacity-25" on:click|preventDefault={addNewCatalog} disabled={disableButtonAddNewCatalog}>Adicionar novo catálogo</button>
+        <button class="md:w-1/5 shadow-sm rounded bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 disabled:opacity-25" on:click|preventDefault={addNewCatalog} disabled={disableButtonAddNewCatalog}>Adicionar novo catálogo</button>
+        
+        
+        <div class="flex h-full space-x-2 md:flex ml-4"> 
+            <button class="w-1/2 h-full p-2  bg-blue-700 font-semibold text-white rounded-md flex items-center justify-center hover:bg-blue-800 disabled:opacity-25" disabled={items.length === 0}  on:click={() => dataToPdf(items)}>
+                <svg class="w-6 h-6 text-white dark:text-white mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 17v-5h1.5a1.5 1.5 0 1 1 0 3H5m12 2v-5h2m-2 3h2M5 10V8c0-.4.1-.6.3-.8l4-4 .6-.2H18c.6 0 1 .4 1 1v6M5 19v1c0 .6.4 1 1 1h12c.6 0 1-.4 1-1v-1M10 3v4c0 .6-.4 1-1 1H5m6 4v5h1.4a1.6 1.6 0 0 0 1.6-1.6v-1.8a1.6 1.6 0 0 0-1.6-1.6H11Z"/>
+                </svg>
+                .PDF
+            </button>
+
+            <button class="w-1/2 h-full p-2  bg-blue-700 font-semibold text-white rounded-md flex items-center justify-center hover:bg-blue-800 disabled:opacity-25" disabled={items.length === 0}  on:click={() => keywordsToCSV(items)}>
+                <svg class="w-6 h-6 text-white dark:text-white mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10V8c0-.4.1-.6.3-.8l4-4 .6-.2H18c.6 0 1 .4 1 1v6M5 19v1c0 .6.4 1 1 1h12c.6 0 1-.4 1-1v-1M10 3v4c0 .6-.4 1-1 1H5m2.7 9h-1A1.6 1.6 0 0 1 5 15.4v-1.8A1.6 1.6 0 0 1 6.6 12h1m8.4 0 1.4 4.8L19 12m-6-.2h-1a1.3 1.3 0 0 0-1.4 1.2 1.3 1.3 0 0 0 1.2 1.5h.5a1.3 1.3 0 0 1 1.3 1.7c-.2.6-.7.8-1.4.8h-1"/>
+                </svg>
+                .CSV
+            </button>
+        </div>
     </div>
 </form>
 <div class = "">

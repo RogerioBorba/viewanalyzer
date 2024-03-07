@@ -71,10 +71,18 @@ export class WFSLayer extends BaseLayer {
     }
 
     metadataLink() {
-        if(!this.metadataURLs())
-            return null
+        if(!this.layerCapability.MetadataURL)
+            return 'Sem metadado associado'
+        
         return this.layerCapability.MetadataURL["#text"]
     }
+    /*
+    metadataLink() {
+        if(!this.layerCapability.MetadataURL["#text"])
+            return 'Sem metadado associado'
+        return this.layerCapability.MetadataURL["#text"]
+    }
+    */
 
     metadataType() {
         if (!this.layerCapability.MetadataURL)
@@ -117,7 +125,7 @@ export class WFSLayer extends BaseLayer {
     
     typeMetadataString() {
         if (this.metadataURLs().length == 0)
-            return "SEM METADADOS"
+            return "Sem metadado associado"
         const list_meta = this.metadataURLs().map(metada => metada.type())
         return list_meta
     }
