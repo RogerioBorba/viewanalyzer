@@ -1,9 +1,15 @@
-/*Operações para criar csv de wms */
+/**
+ * As funções wmsObjToCSV e wmsListToCSV trabalham em conjunto. wmsObjToCSV pega cada elemento, um por vez,
+ * e o coloca no padrão adequado para preencher o csv
+ * @param {Object} obj - Obj é o elemento WMS a ser transformado 
+ * @returns {String} - Retorna a String já padronizada para ser adicionada ao csv
+ */
+
 function wmsObjToCSV(obj) {
     let csvString = '';
     csvString += obj['Nome'] + ';' +
         obj['Título'] + ';' +
-        obj['Palavras Chave'] + ';' +
+        obj['Palavras Chaves'] + ';' +
         obj['Estilo'] + ';' +
         obj['Crss'] + ';';
         if (Array.isArray(obj.Link_metadados) && obj.Link_metadados.length > 0) {
@@ -14,6 +20,13 @@ function wmsObjToCSV(obj) {
 
     return csvString;
 }
+
+/**
+ * wmsList recebe o array de objetos a serem transformados, adiciona o cabeçalho do csv e envia para wmsObjToCSV.
+ * Após a padronização, os dados são enviados para csvDownload para realizar o download do CSV
+ * 
+ * @param {Object[]} elements - a lista de objetos WMS recebida 
+ */
 
 export function wmsListToCSV(elements) {
     let csvFile = 'nome;titulo;palavras_chave;estilo;crss;link_metadado\n';
@@ -28,28 +41,33 @@ export function wmsListToCSV(elements) {
 
 }
 
-export function csvDownload(csvFile, filename){
-        // Cria um Blob com o conteúdo CSV
-        //const lista = listaComplexType //.map(complexType => toJsonObject(complexType))
-        //const csvFile = listOfWmsToCsv(elements)
-        const blob = new Blob([csvFile], { type: "text/html; charset=utf-8;" });
-        //const filename = 'tipo_feicao.csv'
-        // Cria um link de download
-        let link = document.createElement("a");
-        if (link.download !== undefined) { // feature detection
-            // Browsers that support HTML5 download attribute
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", filename);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    }
+
+/**
+ * Função geral responsável por fazer o download do csv
+ * @param {String} csvFile - String já em formato csv
+ * @param {String} fileName - O nome do arquivo desejado
+ */
+export function csvDownload(csvFile, fileName){
+    const csvContent = '\uFEFF' + csvFile; // Adiciona BOM para compatibilidade com Excel
+    const csvData = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const csvURL = window.URL.createObjectURL(csvData);
+    const tempLink = document.createElement('a');
+    tempLink.href = csvURL;
+    tempLink.setAttribute('download', fileName);
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+
+}
 
 
-//Inicio de criação de CSV para WFS
+/**
+ * As funções wfsObjToCSV e wfsToCSV trabalham em conjunto. wfsObjToCSV pega cada elemento, um por vez,
+ * e o coloca no padrão adequado para preencher o csv
+ * @param {Object} obj - Obj é o elemento WFS a ser transformado 
+ * @returns {String} - Retorna a String já padronizada para ser adicionada ao csv
+ */
+
 function wfsObjToCSV(obj) {
     let csvString = '';
     csvString += obj["Nome"] + ';' +
@@ -62,7 +80,12 @@ function wfsObjToCSV(obj) {
     return csvString
 }
 
-
+/**
+ * wfsToCSV recebe o array de objetos a serem transformados, adiciona o cabeçalho do csv e envia para wfsObjToCSV.
+ * Após a padronização, os dados são enviados para csvDownload para realizar o download do CSV
+ * 
+ * @param {Object[]} elements - a lista de objetos WFS recebida 
+ */
 export function wfsToCSV(elements) {
     console.log(elements)
     let csvFile = 'nome;titulo;palavras_chave;default_srs;tipo_metadado;link_metadado\n';
@@ -77,7 +100,12 @@ export function wfsToCSV(elements) {
 }
 
 
-//CSV - Keywords - WFS 
+/**
+ * Adapta cada elemento para o formato csv
+ * @param {*} keyword - objeto contendo palavra-chave e quantidade de vezes que elas aparecem
+ * @returns {String} String pronta para ser adicionada ao arquivo no formato CSV 
+ */
+
 function keywordsToString(keyword){
     let csvString = '';
     csvString += keyword.palavra_chave + ";" +
@@ -85,6 +113,12 @@ function keywordsToString(keyword){
 
     return csvString
 }
+
+ /**
+  * keyWordsToCSV é a função utilizada para as abas com palavras-chave. O cabeçalho do csv é adicionado 
+  * e enviado keywordsToString para adaptar os objetos ao formato csv
+  * @param {Object[]} elements - array de objetos contendo palavra-chave e quantidade 
+  */
 
 export function keywordsToCSV(elements) {
    
@@ -95,4 +129,33 @@ export function keywordsToCSV(elements) {
 
     let fileName = "palavras_chave.csv";
     csvDownload(csvFile,fileName)
+}
+
+
+/**
+ *  cswObjToCSV pega cada elemento, um por vez, e o coloca no padrão adequado para preencher o csv
+ * @param {Object} obj - Obj é o elemento WFS a ser transformado 
+ * @returns {String} - Retorna a String já padronizada para ser adicionada ao csv
+ */
+function cswObjToCSV(obj){
+    let resumo = obj['Resumo'].replace(/\r\r\n/g, '\n').replace(/\r?\n/g, ' ');
+    return `${obj['Título']};${obj['Status']};${resumo};${obj['Palavras-chaves']};${obj['Protocolos']};${obj['Padrão de Metadados']}\n`;
+}
+
+
+/**
+ * cswToCSV recebe o array de objetos a serem transformados, adiciona o cabeçalho do csv e envia para cswObjToCSV.
+ * Após a padronização, os dados são enviados para csvDownload para realizar o download do CSV
+ * 
+ * @param {Object[]} elements - a lista de objetos WFS recebida 
+ */
+export function cswToCSV(elements){
+    let csvFile = "título;status;resumo;palavras_chaves;protocolos;padrao_de_metadados\n"
+    elements.forEach(complexType => {
+        csvFile += cswObjToCSV(complexType);
+    });
+
+    const fileName = 'catalogo_csw.csv';
+    csvDownload(csvFile,fileName);
+
 }
