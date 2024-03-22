@@ -13,10 +13,12 @@
     onMount(async () => {
         
         if (!md_metadata) {
-            console.log("md_metadata: ", md_metadata)
+            
             return null
         }   
+        console.log("MD_METADATA" + JSON.stringify(md_metadata))
         metaMetadata = new MD_Metadata(md_metadata)
+        console.log("Dados transformados: " + metaMetadata.getIdentificationInfo())
         console.log("metaMetadata.getIdentificationInfo().keywords(): ", metaMetadata.getIdentificationInfo().keywords())
         if (metaMetadata.getDistributionInfo())
             console.log("metaMetadata.getDistributionInfo().onLineProtocols(): ", metaMetadata.getDistributionInfo().onLineProtocols())

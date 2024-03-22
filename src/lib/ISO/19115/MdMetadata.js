@@ -23,6 +23,8 @@ export class MD_Metadata {
         if (!this.distributionInfo && this.metadataObject["gmd:distributionInfo"] && this.metadataObject["gmd:distributionInfo"]["gmd:MD_Distribution"])
             this.distributionInfo = new MD_Distribution(this.metadataObject["gmd:distributionInfo"]["gmd:MD_Distribution"])
         return this.distributionInfo
+
+        
     }
 
     getIdentificationInfo() {

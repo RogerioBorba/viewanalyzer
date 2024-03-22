@@ -43,6 +43,8 @@
         if (selectedItems.length == 0)
             return alert( 'Escolha pelo menos uma instituição')
         selectedCatalogs = selectedCatalogs.concat(selectedItems)
+     
+        
         
         //for (const idTextIRI of selectedItems) {}  
     }

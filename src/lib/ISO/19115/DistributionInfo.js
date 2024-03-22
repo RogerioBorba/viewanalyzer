@@ -24,6 +24,8 @@ export class MD_Distribution {
             return []
         if (this.getTransferOptions()["gmd:MD_DigitalTransferOptions"]["gmd:onLine"] == null)
             return []
+        
+
         let arrOnline =  this.getTransferOptions()["gmd:MD_DigitalTransferOptions"]["gmd:onLine"] 
         if (arrOnline == null )
             return []
@@ -33,9 +35,25 @@ export class MD_Distribution {
     }
     onLineProtocols() {
         const onLINE =  this.onLine()
+       
+        
+        if(onLINE.length === 0){
+            if (
+                this.metadataObject["gmd:onLine"] &&
+                this.metadataObject["gmd:onLine"][0]["gmd:CI_OnlineResource"] &&
+                this.metadataObject["gmd:onLine"][0]["gmd:CI_OnlineResource"]["gmd:protocol"] &&
+                this.metadataObject["gmd:onLine"][0]["gmd:CI_OnlineResource"]["gmd:protocol"]["gco:CharacterString"]
+            ) {
+        
+                return this.metadataObject["gmd:onLine"][0]["gmd:CI_OnlineResource"]["gmd:protocol"]["gco:CharacterString"]["#text"];
+            }
+        }
+          
         return onLINE.map((online)=> {
             if (online["gmd:CI_OnlineResource"]  && online["gmd:CI_OnlineResource"]["gmd:protocol"] && online["gmd:CI_OnlineResource"]["gmd:protocol"]["gco:CharacterString"])
                 return online["gmd:CI_OnlineResource"]["gmd:protocol"]["gco:CharacterString"]["#text"]})
+
+            
             return ' - '
     }
     
