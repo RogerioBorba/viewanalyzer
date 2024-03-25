@@ -344,14 +344,14 @@ export let catalogos_servicos = [
     },
     {
     "descricao": "IBAMA - Instituto Brasileiro do Meio Ambiente e dos Recursos Naturais Renováveis ",
-    "url": "http://siscom.ibama.gov.br/geoserver/ows",
+    "url": "https://siscom.ibama.gov.br/geoserver/ows",
     "nivel_no": "Nacional",
     "wmsAvailable": true,
     "wfsAvailable": true,
     "wcsAvailable": true,
-    "wmsGetCapabilities": "http://siscom.ibama.gov.br/geoserver/ows?service=wms&request=GetCapabilities&version=1.3.0",
-    "wfsGetCapabilities": "http://siscom.ibama.gov.br/geoserver/ows?service=wfs&request=GetCapabilities&version=1.3.0",
-    "wcsGetCapabilities": "http://siscom.ibama.gov.br/geoserver/ows?service=wcs&request=GetCapabilities&version=1.3.0"
+    "wmsGetCapabilities": "https://siscom.ibama.gov.br/geoserver/ows?service=wms&request=GetCapabilities&version=1.3.0",
+    "wfsGetCapabilities": "https://siscom.ibama.gov.br/geoserver/ows?service=wfs&request=GetCapabilities&version=1.3.0",
+    "wcsGetCapabilities": "https://siscom.ibama.gov.br/geoserver/ows?service=wcs&request=GetCapabilities&version=1.3.0"
     },
     {
     "descricao": "IBGE - Instituto Brasileiro de Geografia e Estatística ",
@@ -366,14 +366,14 @@ export let catalogos_servicos = [
     },
     {
     "descricao": "ICA - Instituto de Cartografia Aeronáutica ",
-    "url": "http://geoaisweb.decea.gov.br/geoserver/ICA/ows",
+    "url": "https://geoaisweb.decea.gov.br/geoserver/ICA/ows",
     "nivel_no": "Nacional",
     "wmsAvailable": true,
     "wfsAvailable": true,
     "wcsAvailable": true,
-    "wmsGetCapabilities": "http://geoaisweb.decea.gov.br/geoserver/ICA/ows?service=wms&request=GetCapabilities&version=1.3.0",
-    "wfsGetCapabilities": "http://geoaisweb.decea.gov.br/geoserver/ICA/ows?service=wfs&request=GetCapabilities&version=1.3.0",
-    "wcsGetCapabilities": "http://geoaisweb.decea.gov.br/geoserver/ICA/ows?service=wcs&request=GetCapabilities&version=1.3.0"
+    "wmsGetCapabilities": "https://geoaisweb.decea.gov.br/geoserver/ICA/ows?service=wms&request=GetCapabilities&version=1.3.0",
+    "wfsGetCapabilities": "https://geoaisweb.decea.gov.br/geoserver/ICA/ows?service=wfs&request=GetCapabilities&version=1.3.0",
+    "wcsGetCapabilities": "https://geoaisweb.decea.gov.br/geoserver/ICA/ows?service=wcs&request=GetCapabilities&version=1.3.0"
     },
     {
     "descricao": "ICMBIO - Instituto Chico Mendes de Conservação da Biodiversidade",
@@ -671,6 +671,17 @@ export let catalogos_servicos = [
     "wmsGetCapabilities": "http://geoserver.prodemge.gov.br/geoserver/ows?service=wms&request=GetCapabilities&version=1.3.0",
     "wfsGetCapabilities": "http://geoserver.prodemge.gov.br/geoserver/ows?service=wfs&request=GetCapabilities&version=1.3.0",
     "wcsGetCapabilities": "http://geoserver.prodemge.gov.br/geoserver/ows?service=wcs&request=GetCapabilities&version=1.3.0"
+    },
+    {
+    "descricao": "SEMA (CE) - Secretaria do Meio Ambiente e Mudança do Clima do Estado do Ceará",
+    "url": "https://pedea.sema.ce.gov.br/geoserver/inde/wms",
+    "nivel_no": "Subnacional",
+    "wmsAvailable": true,
+    "wfsAvailable": false,
+    "wcsAvailable": false,
+    "wmsGetCapabilities": "https://pedea.sema.ce.gov.br/geoserver/inde/wms?service=wms&request=GetCapabilities&version=1.3.0",
+    "wfsGetCapabilities": null,
+    "wcsGetCapabilities": null
     },
     {
     "descricao": "SEMACE (CE) - Superintendência Estadual do Meio Ambiente do Ceará",
