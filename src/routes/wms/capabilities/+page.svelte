@@ -132,25 +132,25 @@
         <input class="m-1 p-1 w-1/4 mr-2" type="text" bind:value={textEntered} placeholder="Digite para filtrar">
         <div class="flex items-center">
             <input class="mr-2" type="checkbox" bind:checked={withMetadadaChecked}>
-            <span class="mr-2">Com metadado associado</span>
+            <span class="mr-2 whitespace-nowrap text-sm">Com metadado associado</span>
         </div>
         <div class="flex items-center">
             <input class="mr-2" type="checkbox" bind:checked={withoutMetadadaChecked}>
-            <span class="mr-2">Sem metadado associado</span>
+            <span class="mr-2 whitespace-nowrap text-sm">Sem metadado associado</span>
         </div>
         <div class="flex items-center">
             <input class="mr-2" type="checkbox" bind:checked={withoutKeywordChecked}>
-            <span class="mr-2">Sem palavra chave</span>
+            <span class="mr-2 whitespace-nowrap text-sm">Sem palavra chave</span>
         </div>
         <div class="flex items-center">
             <input class="mr-2" type="checkbox" bind:checked={nameEqualTitleChecked}>
-            <span class="mr-4">Nome igual ao título</span>
+            <span class="mr-4 whitespace-nowrap text-sm">Nome igual ao título</span>
         </div>
-        <div class="mr-10">
-            <p>Qtd : {filteredWMSLayers.length}</p>
+        <div>
+            <p class="whitespace-nowrap text-sm">Qtd : {filteredWMSLayers.length}</p>
         </div>
         
-        <div class="flex ml-12 space-x-0">
+        <div class="flex ml-2 space-x-0">
             <PdfJsObject listJsonObject = {wmsArrayToCSV} header={""} ></PdfJsObject>
             <CsvWms {wmsArrayToCSV}></CsvWms>
             

@@ -16,12 +16,15 @@ export class MD_Identification {
 
     status() {
         if(this.formatGMD())
+            
             return this.metadataObject["gmd:citation"]["gmd:status"]["gco:CharacterString"]["#text"];
         
 
         if (this.metadataObject["gmd:status"] && this.metadataObject["gmd:status"]["gmd:MD_ProgressCode"]) 
             return this.metadataObject["gmd:status"]["gmd:MD_ProgressCode"]["@attributes"].codeListValue
-        return ''
+        
+        
+        return 'Sem status associado'
     }
     
     abstractInfo() {
@@ -45,7 +48,7 @@ export class MD_Identification {
         if (this.formatGMD()) {
             const keywordsArray = this.metadataObject["gmd:citation"]["gmd:descriptiveKeywords"];
             if (keywordsArray === null) {
-                return [];
+                return 'Sem palavras-chaves associadas';
             } else {
                 // Verifica se keywordsArray é um array
                 if (Array.isArray(keywordsArray)) {
@@ -55,23 +58,23 @@ export class MD_Identification {
                     // Se keywordsArray for um objeto, retorna apenas o valor de "#text"
                     return keywordsArray["gmd:MD_Keywords"]["gmd:keyword"]["gco:CharacterString"]["#text"];
                 } else {
-                    return [];
+                    return 'Sem palavras-chaves associadas';
                 }
             }
         }
         
 
         if (this.descriptiveKeywords()== null)
-            return []
+            return 'Sem palavras-chaves associadas'
         
         if (this.descriptiveKeywords() && this.descriptiveKeywords()["gmd:MD_Keywords"] == null)
-            return []
+            return 'Sem palavras-chaves associadas'
         
        
 
         const keys = this.descriptiveKeywords()["gmd:MD_Keywords"]["gmd:keyword"]    
         if (keys == null)
-            return []
+            return 'Sem palavras-chaves associadas'
         const arr = Array.isArray(keys)?keys:[keys]
         return arr.map((k)=> {return k["gco:CharacterString"]["#text"]})
 

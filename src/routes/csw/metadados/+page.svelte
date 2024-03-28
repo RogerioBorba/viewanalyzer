@@ -9,18 +9,80 @@
     import { textXml2Json } from '$lib/xml-json/xml2Json';
     import { onMount, beforeUpdate } from 'svelte';
     import {MD_Metadata} from '$lib/ISO/19115/MdMetadata'
-  import CswMetadataCard from '$lib/component/csw/CSWMetadataCard.svelte';
-  import { each, element, onDestroy } from 'svelte/internal';
+    import {cswToObject} from '$lib/component/csw/cswFunctions'
+
+    import CswMetadataCard from '$lib/component/csw/CSWMetadataCard.svelte';
+    import { each, element, onDestroy } from 'svelte/internal';
+    import { add } from 'ol/coordinate';
     let  metadataObj  = {}
     let arrMetadataObj = []
     let totalRequests = 0
     let maxRecordsByRequest = 20
     const recordsPerPage = 20;
-
+    let withStatusChecked = false;
+    let withoutStatusChecked = false;
+    let withKeywordChecked = false;
+    let withoutKeywordChecked = false;
+    let filteredCsw = []
+    let disableWithStatus = false;
+    let disableWithoutStatus = false;
     //https://metadados.inde.gov.br/geonetwork/srv/por/csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=csw:Record&constraintLanguage=CQL_TEXT&Constraint=%E2%80%9C%%E2%80%9D&ElementSetName=full&resultType=results&maxRecords=20&startPosition=19
     //data = {url: url, body: body, content_type: content_type}
 
     $: TotalDeItensProcessados = itemsProcessed;
+
+    $: {
+
+        if(arrMetadataObj.length > 0){
+            filteredCsw = addId(arrMetadataObj);
+        }
+
+        if(withStatusChecked){
+            filteredCsw = filteredCsw.filter(
+                element => {
+                    let obj = new MD_Metadata(element)
+                    return obj.getIdentificationInfo().status() !== 'Sem status associado';
+                }
+            )
+        }  
+            //filteredCsw = addId(filteredCsw);
+        if(withoutStatusChecked){
+            
+            filteredCsw = filteredCsw.filter(
+                element => {
+                    let obj = new MD_Metadata(element)
+                    return obj.getIdentificationInfo().status() === 'Sem status associado';
+                }
+            )
+        }
+
+        if(withKeywordChecked){
+            filteredCsw = filteredCsw.filter(
+                element => {
+                    let obj = new MD_Metadata(element)
+                    return obj.getIdentificationInfo()?.keywords() !== 'Sem palavras-chaves associadas';
+                }
+            )
+        }
+
+        if(withoutKeywordChecked){
+            filteredCsw = filteredCsw.filter(
+                element => {
+                    let obj = new MD_Metadata(element)
+                    return obj.getIdentificationInfo()?.keywords() === 'Sem palavras-chaves associadas';
+                }
+            )
+        }
+      
+    }
+
+    function addId(array){
+        array.forEach(obj => {
+                obj.id = uuid(); // Adiciona um ID único ao objeto
+        })
+        return array;
+    }
+
 
     async function getXML(data) {
         try {
@@ -28,7 +90,6 @@
             const startPosition = getParameterValueAsStr(data.body.toLowerCase(), 'startPosition'.toLowerCase())
             const query = `request=GetRecords&service=CSW&outputSchema=http://www.isotc211.org/2005/gmd&version=2.0.2&ElementSetName=full&resultType=results&startPosition=${startPosition}&maxRecords=${maxRecords}`
             const url = `${data['url']}?${query}`
-            console.log("oi" + url);
             const controller = new AbortController();
             const signal = controller.signal;
             const res = await fetchData(url, signal)
@@ -51,6 +112,9 @@
         return value || null;
     }
 
+    function uuid() {
+        return Math.random().toString(36).substr(2, 9);
+    }
 
     let itemsProcessed = 0
     onMount(async () => {
@@ -90,77 +154,66 @@
             startPosition += maxRecordsByRequest;
         }
         
-        arrMetadataObj = arrMetadataObj.filter(obj => obj != null && obj != undefined)
-        
+        arrMetadataObj = arrMetadataObj.filter(obj => obj != null && obj != undefined)   
+
     });
-
-    
-    
-    function cswToObject(array){
-        let arrayCSW = [];
-        array.forEach(element => {
-            let obj = new MD_Metadata(element);
-            let metadataObj = {
-                'Título': obj.getIdentificationInfo().title(),
-                'Status': obj.getIdentificationInfo().status(),
-                'Resumo': obj.getIdentificationInfo().abstractInfo(),
-                'Palavras-chaves': obj.getIdentificationInfo().keywords(),
-                'Padrão de Metadados' : obj.metadataStandardName()
-            }
-            if(obj.getDistributionInfo())
-                metadataObj['Protocolos'] = obj.getDistributionInfo().onLineProtocols();
-
-            else{
-                metadataObj['Protocolos'] = 'Sem protocolos associados'
-            }
-            arrayCSW = [...arrayCSW, metadataObj]
-           
-
-        })
-        
-        return arrayCSW;
-        //dataToPdf(arrayCSW);
-    }
 
    
 </script>
 
-<Navbar>
-   
-    <div class="flex md:order-2 space-x-4">   
-        <p class="mt-3 mr-5 text-md text-blue-700 font-semibold">Quantidade de registros processados:<span class="ml-2">{TotalDeItensProcessados}/{$totalMetadata}</span></p>
+<div id="hideDiv" class="m-2 flex md:flex-row flex-col justify-center md:justify-start md:items-center">
+    <div class="mt-1 flex md:flex-row justify-start">
+        <NavUl class="order-1">
+            <NavLi href="/" active={true}>Home</NavLi>
+        </NavUl>
+    </div>
+    <div class="mt-1 flex justify-center ml-auto"> 
+        <div class="flex items-center">
+            <input class="mr-2" disabled={disableWithStatus}  type="checkbox" bind:checked={withStatusChecked}>
+            <span class="mr-2 whitespace-nowrap text-sm">Com status associado</span>
+        </div>
+        <div class="flex items-center">
+            <input class="mr-2" type="checkbox" disabled={disableWithoutStatus}  bind:checked={withoutStatusChecked}>
+            <span class="mr-2 whitespace-nowrap text-sm">Sem status associado</span>
+        </div>
+        <div class="flex items-center">
+            <input class="mr-2" type="checkbox" bind:checked={withKeywordChecked}>
+            <span class="mr-2 whitespace-nowrap text-sm">Com palavras-chave</span>
+        </div>
+        <div class="flex items-center mr-50">
+            <input class="mr-2" type="checkbox" bind:checked={withoutKeywordChecked}>
+            <span class="mr-4 whitespace-nowrap text-sm">Sem palavras-chave</span>
+        </div>
+
         
-        <Button size="sm" on:click={() => dataToPdf(cswToObject(arrMetadataObj))}>
+    </div>
+    <div class="flex ml-auto space-x-2"> <!-- Move a div dos botões para o canto direito -->
+
+        <p class="mt-3 mr-5 text-md text-blue-700 font-semibold whitespace-nowrap text-sm">Quantidade de registros processados:<span class="ml-2">{TotalDeItensProcessados}/{$totalMetadata}</span></p>
+
+        <Button size="sm" on:click={() => dataToPdf(cswToObject(filteredCsw))}>
             <svg class="w-6 h-6 text-white dark:text-white mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 17v-5h1.5a1.5 1.5 0 1 1 0 3H5m12 2v-5h2m-2 3h2M5 10V8c0-.4.1-.6.3-.8l4-4 .6-.2H18c.6 0 1 .4 1 1v6M5 19v1c0 .6.4 1 1 1h12c.6 0 1-.4 1-1v-1M10 3v4c0 .6-.4 1-1 1H5m6 4v5h1.4a1.6 1.6 0 0 0 1.6-1.6v-1.8a1.6 1.6 0 0 0-1.6-1.6H11Z"/>
-              </svg>
+            </svg>
             .PDF 
         </Button>
         
-        <Button size="sm" on:click={() => cswToCSV(cswToObject(arrMetadataObj))}>
+        <Button size="sm" on:click={() => cswToCSV(cswToObject(filteredCsw))}>
             <svg class="w-6 h-6 text-white dark:text-white mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10V8c0-.4.1-.6.3-.8l4-4 .6-.2H18c.6 0 1 .4 1 1v6M5 19v1c0 .6.4 1 1 1h12c.6 0 1-.4 1-1v-1M10 3v4c0 .6-.4 1-1 1H5m2.7 9h-1A1.6 1.6 0 0 1 5 15.4v-1.8A1.6 1.6 0 0 1 6.6 12h1m8.4 0 1.4 4.8L19 12m-6-.2h-1a1.3 1.3 0 0 0-1.4 1.2 1.3 1.3 0 0 0 1.2 1.5h.5a1.3 1.3 0 0 1 1.3 1.7c-.2.6-.7.8-1.4.8h-1"/>
             </svg>
              .CSV
-           
         </Button>
-
-        <NavHamburger />
     </div>
-    <NavUl class="order-1">
-      <NavLi href="/" active={true}>Home</NavLi>
-    </NavUl>
+</div>
 
     
-</Navbar>
+    
 
-<div class = "m-2 grid gap-2 md:grid-cols-3 grid-cols-1">
-     
-    {#each arrMetadataObj as md_metadata}
+<div class="m-2 grid gap-2 md:grid-cols-3 grid-cols-1">
+    {#each filteredCsw as md_metadata (md_metadata.id)}
         {#if !(md_metadata == null)}
-            <CSWMetadataCard md_metadata ={md_metadata} ></CSWMetadataCard>
-        {/if}    
+            <CSWMetadataCard md_metadata={md_metadata}></CSWMetadataCard>
+        {/if}
     {/each}
-          
-
 </div>

@@ -94,32 +94,35 @@
         </NavUl>
     </div>
 
-    <input class= "m-1 p-1 w-1/4 mr-2" type="text" bind:value={textEntered} placeholder="Digite para filtrar">
-    <div>
+    <input class="m-1 p-1 w-1/4 mr-2" type="text" bind:value={textEntered} placeholder="Digite para filtrar">
+
+    <div class="flex items-center text-sm">
         <input class="mr-2" type="checkbox" bind:checked={withMetadadaChecked}>
-        <span class="mr-2">Com metadado associado</span>
+        <span class="mr-2 whitespace-nowrap">Com metadado associado</span>
     </div>
-    <div>
+    
+    <div class="flex items-center text-sm">
         <input class="mr-2" type="checkbox" bind:checked={withoutMetadadaChecked}>
-        <span class="mr-2">Sem metadado associado</span>
-    </div>
-    <div>
-        <input class="mr-2" type="checkbox" bind:checked={withoutKeywordChecked}>
-        <span class="mr-2">Sem palavra chave</span>
-    </div>
-    <div>
-        <input class="mr-2" type="checkbox" bind:checked={nameEqualTitleChecked}>
-        <span class="mr-5">Nome igual ao título</span>
-    </div>
-    <div class="mr-10">
-        <p>Qtd : {filteredWFSLayers.length}</p>
-        
+        <span class="mr-2 whitespace-nowrap">Sem metadado associado</span>
     </div>
 
-    <div class="flex ml-12 space-x-0">
-        <PdfJsObject listJsonObject = {wfsLayersAsJson} header={""} ></PdfJsObject>
-        <WfsCsv wfsArrayToCSV = {wfsLayersAsJson}></WfsCsv>
-        
+    <div class="flex items-center text-sm">
+        <input class="mr-2" type="checkbox" bind:checked={withoutKeywordChecked}>
+        <span class="mr-2 whitespace-nowrap">Sem palavra chave</span>
+    </div>
+
+    <div class="flex items-center text-sm">
+        <input class="mr-2" type="checkbox" bind:checked={nameEqualTitleChecked}>
+        <span class="mr-5 whitespace-nowrap">Nome igual ao título</span>
+    </div>
+
+    <div>
+        <p class="whitespace-nowrap text-sm">Qtd : {filteredWFSLayers.length}</p>
+    </div>
+
+    <div class="flex ml-2 space-x-0">
+        <PdfJsObject listJsonObject={wfsLayersAsJson} header={""}></PdfJsObject>
+        <WfsCsv wfsArrayToCSV={wfsLayersAsJson}></WfsCsv>
     </div>
 </div>
 
