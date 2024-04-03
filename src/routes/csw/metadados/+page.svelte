@@ -19,35 +19,34 @@
     let totalRequests = 0
     let maxRecordsByRequest = 20
     const recordsPerPage = 20;
-    let withStatusChecked = false;
-    let withoutStatusChecked = false;
-    let withKeywordChecked = false;
-    let withoutKeywordChecked = false;
-    let filteredCsw = []
-    let disableWithStatus = false;
-    let disableWithoutStatus = false;
+    let filteredCsw = [];
+    let status = ["Com status associado", "Sem status associado"];
+    let wichStatus = '';
+    let keywords = ["Com palavras-chave", "Sem palavras-chave"];
+    let wichKeywords = '';
     //https://metadados.inde.gov.br/geonetwork/srv/por/csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=csw:Record&constraintLanguage=CQL_TEXT&Constraint=%E2%80%9C%%E2%80%9D&ElementSetName=full&resultType=results&maxRecords=20&startPosition=19
     //data = {url: url, body: body, content_type: content_type}
 
     $: TotalDeItensProcessados = itemsProcessed;
-
+    
     $: {
 
         if(arrMetadataObj.length > 0){
             filteredCsw = addId(arrMetadataObj);
         }
 
-        if(withStatusChecked){
+        if(wichStatus === "Com status associado"){
+            
             filteredCsw = filteredCsw.filter(
                 element => {
                     let obj = new MD_Metadata(element)
                     return obj.getIdentificationInfo().status() !== 'Sem status associado';
                 }
             )
-        }  
-            //filteredCsw = addId(filteredCsw);
-        if(withoutStatusChecked){
+        }
+       
             
+        if(wichStatus === "Sem status associado"){
             filteredCsw = filteredCsw.filter(
                 element => {
                     let obj = new MD_Metadata(element)
@@ -56,7 +55,8 @@
             )
         }
 
-        if(withKeywordChecked){
+        if(wichKeywords === "Com palavras-chave"){
+            
             filteredCsw = filteredCsw.filter(
                 element => {
                     let obj = new MD_Metadata(element)
@@ -65,7 +65,8 @@
             )
         }
 
-        if(withoutKeywordChecked){
+        if(wichKeywords === "Sem palavras-chave"){
+           
             filteredCsw = filteredCsw.filter(
                 element => {
                     let obj = new MD_Metadata(element)
@@ -73,9 +74,12 @@
                 }
             )
         }
-      
+        
+       
+        
+        
     }
-
+    
     function addId(array){
         array.forEach(obj => {
                 obj.id = uuid(); // Adiciona um ID único ao objeto
@@ -169,25 +173,25 @@
     </div>
     <div class="mt-1 flex justify-center ml-auto"> 
         <div class="flex items-center">
-            <input class="mr-2" disabled={disableWithStatus}  type="checkbox" bind:checked={withStatusChecked}>
-            <span class="mr-2 whitespace-nowrap text-sm">Com status associado</span>
+            {#each status as select}
+                <label>
+                    <input type="radio" bind:group={wichStatus} name="status" value={select}/>
+                    <span class="mr-2 text-sm">{select}</span>
+                </label>
+            {/each}
         </div>
         <div class="flex items-center">
-            <input class="mr-2" type="checkbox" disabled={disableWithoutStatus}  bind:checked={withoutStatusChecked}>
-            <span class="mr-2 whitespace-nowrap text-sm">Sem status associado</span>
+            {#each keywords as key}
+                <label>
+                    <input type="radio" bind:group={wichKeywords} name="keywords" value={key}/>
+                    <span class="mr-2 text-sm">{key}</span>
+                </label>
+            {/each}
         </div>
-        <div class="flex items-center">
-            <input class="mr-2" type="checkbox" bind:checked={withKeywordChecked}>
-            <span class="mr-2 whitespace-nowrap text-sm">Com palavras-chave</span>
-        </div>
-        <div class="flex items-center mr-50">
-            <input class="mr-2" type="checkbox" bind:checked={withoutKeywordChecked}>
-            <span class="mr-4 whitespace-nowrap text-sm">Sem palavras-chave</span>
-        </div>
-
+      
         
     </div>
-    <div class="flex ml-auto space-x-2"> <!-- Move a div dos botões para o canto direito -->
+    <div class="flex ml-auto space-x-2"> 
 
         <p class="mt-3 mr-5 text-md text-blue-700 font-semibold whitespace-nowrap text-sm">Quantidade de registros processados:<span class="ml-2">{TotalDeItensProcessados}/{$totalMetadata}</span></p>
 
