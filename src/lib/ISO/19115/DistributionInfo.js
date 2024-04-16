@@ -27,8 +27,9 @@ export class MD_Distribution {
         
 
         let arrOnline =  this.getTransferOptions()["gmd:MD_DigitalTransferOptions"]["gmd:onLine"] 
-        if (arrOnline == null )
+        if (arrOnline == null ){
             return []
+        }
         return Array.isArray(arrOnline )? arrOnline: [arrOnline]
         
 
@@ -55,6 +56,64 @@ export class MD_Distribution {
 
             
             return ' - '
+    }
+
+    catchProtocols(){
+            const onLINE =  this.onLine()
+            console.log("ONline" + onLINE)
+           
+            
+            if(onLINE.length === 0){
+                if (
+                    this.metadataObject["gmd:onLine"] &&
+                    this.metadataObject["gmd:onLine"][0]["gmd:CI_OnlineResource"] &&
+                    this.metadataObject["gmd:onLine"][0]["gmd:CI_OnlineResource"]["gmd:protocol"] &&
+                    this.metadataObject["gmd:onLine"][0]["gmd:CI_OnlineResource"]["gmd:protocol"]["gco:CharacterString"]
+                ) {
+            
+                    return this.metadataObject["gmd:onLine"][0]["gmd:CI_OnlineResource"]["gmd:protocol"]["gco:CharacterString"]["#text"];
+                }
+            }
+            
+
+            const result = onLINE.map(online => {
+            const resource = online["gmd:CI_OnlineResource"];
+            if (
+                resource &&
+                resource["gmd:protocol"] &&
+                resource["gmd:protocol"]["gco:CharacterString"] &&
+                resource["gmd:linkage"] &&
+                resource["gmd:linkage"]["gmd:URL"] &&
+                resource["gmd:linkage"]["gmd:URL"]["#text"] &&
+                resource["gmd:name"] &&
+                resource["gmd:name"]["gco:CharacterString"] &&
+                resource["gmd:name"]["gco:CharacterString"]["#text"]
+            ) {
+                const url = resource["gmd:linkage"]["gmd:URL"]["#text"];
+                const protocol = resource["gmd:protocol"]["gco:CharacterString"]["#text"];
+                const name = resource["gmd:name"]["gco:CharacterString"]["#text"];
+                return { url, protocol, name };
+            }
+            return null; // ou {} se quiser um objeto vazio
+        }).filter(Boolean); // Filtra os resultados nulos (undefined)
+
+        return result;
+    
+
+
+            /*
+            const onlineResources = onLINE.filter(item => item["gmd:CI_OnlineResource"])
+           
+            const mappedData = onlineResources.map(item => {
+                const onlineResource = item["gmd:CI_OnlineResource"];
+                const url = onlineResource["gmd:linkage"]["gmd:URL"]["#text"];
+                const protocol = onlineResource["gmd:protocol"]["gco:CharacterString"]["#text"];
+                const name = onlineResource["gmd:name"]["gco:CharacterString"]["#text"];
+                return { url, protocol, name };
+        });
+            
+            return mappedData;
+        */
     }
     
 }

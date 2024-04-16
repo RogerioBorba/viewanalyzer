@@ -8,3 +8,5 @@ export let countProcessado = writable(0)
 export let keywordCSWCountByName = writable({})
 export let allCSWKeywords = writable([])
 export let postURL = writable({url: '', body: ''})
+export let countWMS = writable(0);
+export let countWFS = writable (0);

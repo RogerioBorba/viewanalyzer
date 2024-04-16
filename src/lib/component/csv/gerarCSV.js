@@ -159,3 +159,28 @@ export function cswToCSV(elements){
     csvDownload(csvFile,fileName);
 
 }
+
+
+function metadataToString(metadata){
+    console.log("metadata " + JSON.stringify(metadata))
+    let csvString = '';
+    csvString += metadata.nome + ";" + 
+        metadata.url + ";" + 
+        metadata.protocolo + ";" +
+        metadata.erro + "\n"
+    
+    
+        return csvString;
+}
+
+
+export function metadataToCSV(elements){
+    let csvFile = "nome;url;protocolo;erro\n"
+    elements.forEach(complexType => {
+        csvFile+= metadataToString(complexType)
+    })
+
+    const fileName = 'links_quebrados.csv';
+    csvDownload(csvFile,fileName);
+
+}

@@ -1006,7 +1006,7 @@ let catalogos_ibge =
             "noCentralCategoria": "ANM"
         },
         {
-            "descricao": "ANP - Agência Nacional de Petróleo",
+            "descricao": "ANP - Agência Nacional do Petróleo, Gás Natural e Biocombustíveis",
             "sigla": "ANP",
             "url": "https://metadados.inde.gov.br/geonetwork",
             "cswGetCapabilities": "https://metadados.inde.gov.br/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetCapabilities",
@@ -1067,6 +1067,13 @@ let catalogos_ibge =
             "url": "https://bdgex.eb.mil.br/bdgexapp",
             "cswGetCapabilities": "https://bdgex.eb.mil.br/csw?service=CSW&version=2.0.2&request=GetCapabilities",
             "noCentralCategoria": null
+        },
+        {
+            "descricao": "EPE - Empresa de Pesquisa Energética",
+            "sigla": "EPE",
+            "url": "https://metadados.inde.gov.br/geonetwork",
+            "cswGetCapabilities": "https://metadados.inde.gov.br/geonetwork/srv/por/csw?service=CSW&version=2.0.2&request=GetCapabilities",
+            "noCentralCategoria": "EPE"
         },
         {
             "descricao": "EMBRAPA - Empresa Brasileira de Pesquisa Agropecuária",  

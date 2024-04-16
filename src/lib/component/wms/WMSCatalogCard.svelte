@@ -45,6 +45,7 @@
             const controller = new AbortController()
             const timeoutId = setTimeout(() => controller.abort(), 60000)
             let tempo = new Date().getTime();
+            console.log("link wms: " + objIdDescricaoIri.iri)
             let res = await fetchData(objIdDescricaoIri.iri, { signal: controller.signal })
             let xmlText = await res.text()
             wmsCapabilities = new WMSCapabilities(await textXml2Json(xmlText))

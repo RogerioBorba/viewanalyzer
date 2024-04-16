@@ -16,6 +16,7 @@
       {name: 'Palavras Chaves ', href: '/csw/palavras-chaves'}, 
       {name: ' Quantidade WMS ', href: '/csw/metadados/protocolo-wms/quantidade'}, 
       {name: ' Quantidade WFS ', href: '/csw/metadados/protocolo-wfs/quantidade'}, 
+      {name: 'Links Quebrados', href: '/csw/links-quebrados'}
     ];
   </script>
   
