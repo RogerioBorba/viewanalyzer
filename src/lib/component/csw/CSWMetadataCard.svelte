@@ -36,6 +36,7 @@
             <h2 class="font-semibold"> <span class="font-bold">Resumo:</span> {metaMetadata.getIdentificationInfo().abstractInfo()} </h2>
             <h2 class="font-semibold"> <span class="font-bold">Palavras chaves:</span> {metaMetadata.getIdentificationInfo().keywords()} </h2>
         {/if}
+        <h2 class="font-semibold"><span class="font-bold">Categorias:</span> {metaMetadata.getCategories()} </h2>
         {#if metaMetadata.getDistributionInfo()}
             <h2 class="font-semibold"> <span class="font-bold">Protocolos:</span> { metaMetadata.getDistributionInfo().onLineProtocols() }</h2>
         {/if}

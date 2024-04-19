@@ -39,5 +39,55 @@ export class MD_Metadata {
             this.identificationInfo = new SV_ServiceIdentification(this.metadataObject["gmd:identificationInfo"]["srv:SV_ServiceIdentification"])
         return this.identificationInfo
     }
+
+    getCategories(){
+        let categories = []
+        if(this.metadataObject["gmd:identificationInfo"] && this.metadataObject["gmd:identificationInfo"]["gmd:MD_DataIdentification"]
+        || this.metadataObject.hasOwnProperty("gmd:identificationInfo")){
+            categories.push("Identificação");
+        }
+
+        if(this.metadataObject["gmd:distributionInfo"] && this.metadataObject["gmd:distributionInfo"]["gmd:MD_Distribution"]
+        || this.metadataObject.hasOwnProperty("gmd:distributionInfo")){
+            categories.push("Distribuição");
+        }
+
+        if(this.metadataObject["gmd:referenceSystemInfo"] && this.metadataObject["gmd:referenceSystemInfo"]["gmd:MD_ReferenceSystem"]
+        || this.metadataObject.hasOwnProperty("mdb:referenceSystemInfo")){
+            categories.push("Sistema de Referência");
+        }
+
+        if(this.metadataObject["gmd:dataQualityInfo"] && this.metadataObject["gmd:dataQualityInfo"]["gmd:DQ_DataQuality"]){
+            categories.push("Qualidade");
+        }
+
+        if(this.metadataObject["gmd:fileIdentifier"] || this.metadataObject.hasOwnProperty("mdb:metadataIdentifier")){
+            categories.push("Metadado");
+        }
+
+        if(this.metadataObject["gmd:metadataIdentifier"] || this.metadataObject.hasOwnProperty("mdb:metadataIdentifier") ){
+            categories.push("Metametadados")
+        }
+
+        if(this.metadataObject['gmd:resourceLineage'] || this.metadataObject.hasOwnProperty("mdb:resourceLineage")){
+            categories.push("Linhagem")
+        }
+
+        if(this.metadataObject["gmd:spatialRepresentationInfo"]){
+            categories.push("Representação Espacial")
+        }
+
+        if(this.metadataObject["gmd:contentInfo"]){
+            categories.push("Conteúdo")
+        }
+
+        if(this.metadataObject["gmd:metadataConstraints"]){
+            categories.push("Restrições de Metadado")
+        }
+
+        console.log("Categorias: " + categories)
+        return categories;
+
+    }
 }
     
