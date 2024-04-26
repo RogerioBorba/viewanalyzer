@@ -36,7 +36,7 @@ export function wmsListToCSV(elements) {
         csvFile += wmsObjToCSV(complexType);
     })
 
-    const filename = 'tipo_feicao.csv';
+    const filename = 'catalogo_wms.csv';
     csvDownload(csvFile, filename);
 
 }
