@@ -123,7 +123,7 @@
 </script>
 
 <div>
-    <div id="hideDiv" class="m-2 flex md:flex-row flex-col justify-center md:justify-start md:items-center">
+    <div id="hideDiv" class="flex items-center">
         <div class="flex md:flex-row justify-start">
             <NavUl class="order-1">
                 <NavLi href="/" active={true}>Home</NavLi>

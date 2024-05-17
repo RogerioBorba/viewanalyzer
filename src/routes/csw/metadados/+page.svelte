@@ -132,6 +132,7 @@
             try {
                 itemsProcessed += Math.min($totalMetadata - itemsProcessed, maxRecordsByRequest);
                 //console.log("BODY: ", body)
+                console.log("URL" + $postURL  + "BODY" + body )
                 let res = await fetchDataByPost($postURL.url, body,'application/xml')  
                 if (res.status == 403) 
                     res = await getXML({url: $postURL.url, body: body, content_type: 'application/xml'})

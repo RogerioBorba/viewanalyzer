@@ -16,8 +16,10 @@
             
             return null
         }   
-        console.log("MD_METADATA" + JSON.stringify(md_metadata))
+        console.log("MD_METADATA" + JSON.stringify(md_metadata));
+        
         metaMetadata = new MD_Metadata(md_metadata)
+        
         console.log("Dados transformados: " + metaMetadata.getIdentificationInfo())
         console.log("metaMetadata.getIdentificationInfo().keywords(): ", metaMetadata.getIdentificationInfo().keywords())
         if (metaMetadata.getDistributionInfo())

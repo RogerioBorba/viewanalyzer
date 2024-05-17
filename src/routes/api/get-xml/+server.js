@@ -5,6 +5,7 @@ import { error } from '@sveltejs/kit';
 export async function GET({url}) {
     
     const an_url = url.search.substring(5);
+    console.log("AN_URL" + an_url)
     if (!an_url) throw error(400, 'O parâmetro url não consta na requisição');
     try {
         console.log("routes>>api>>get-xml>>server")
