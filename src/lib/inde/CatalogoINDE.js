@@ -343,6 +343,17 @@ export let catalogos_servicos = [
     "wcsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/EPE/ows?service=wcs&request=GetCapabilities&version=1.3.0"
     },
     {
+    "descricao": "FAB/COMAE - Comando de Operações Aeroespaciais",
+    "url": "https://geoservicos.inde.gov.br/geoserver/COMAE/ows",
+    "nivel_no": "Nacional",
+    "wmsAvailable": true,
+    "wfsAvailable": true,
+    "wcsAvailable": true,
+    "wmsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/COMAE/ows?service=wms&version=1.3.0&request=GetCapabilities",
+    "wfsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/COMAE/ows?service=wfs&version=1.3.0&request=GetCapabilities",
+    "wcsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/COMAE/ows?service=WCS&version=1.3.0&request=GetCapabilities"
+    },
+    {
     "descricao": "IBAMA - Instituto Brasileiro do Meio Ambiente e dos Recursos Naturais Renováveis ",
     "url": "https://siscom.ibama.gov.br/geoserver/ows",
     "nivel_no": "Nacional",
@@ -704,6 +715,17 @@ export let catalogos_servicos = [
     "wmsGetCapabilities": "http://geo.seplande.al.gov.br/teogc/terraogcwms.cgi?service=wms&request=GetCapabilities&version=1.3.0",
     "wfsGetCapabilities": null,
     "wcsGetCapabilities": null
+    },
+    {
+    "descricao": "SEPLAN (TO) - Secretaria do Planejamento e Orçamento do Estado do Tocantins",
+    "url": "https://geoportal.to.gov.br/geoserver/ows",
+    "nivel_no": "Subnacional",
+    "wmsAvailable": true,
+    "wfsAvailable": true,
+    "wcsAvailable": true,
+    "wmsGetCapabilities": "https://geoportal.to.gov.br/geoserver/ows?service=wms&version=1.3.0&request=GetCapabilities",
+    "wfsGetCapabilities": "https://geoportal.to.gov.br/geoserver/ows?service=wfs&version=1.3.0&request=GetCapabilities",
+    "wcsGetCapabilities": "https://geoportal.to.gov.br/geoserver/ows?service=WCS&version=1.3.0&request=GetCapabilities"
     },
     {
     "descricao": "TCE-RO - Tribunal de Contas do Estado de Rondônia",
