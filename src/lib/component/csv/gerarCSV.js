@@ -184,3 +184,55 @@ export function metadataToCSV(elements){
     csvDownload(csvFile,fileName);
 
 }
+
+
+
+/**
+ *  cswObjToCSV pega cada elemento, um por vez, e o coloca no padrão adequado para preencher o csv
+ * @param {Object} obj - Obj é o elemento WFS a ser transformado 
+ * @returns {String} - Retorna a String já padronizada para ser adicionada ao csv
+ */
+function wcsObjToCSV(obj){
+    console.log("OBJ" + JSON.stringify(obj))
+    let wgs84 = obj["WGS84"] || "-";
+    let boundingBox = obj["Bounding Box"] || "-";
+    let linksMetadados = Array.isArray(obj['Link dos Metadados']) 
+        ? obj['Link dos Metadados'].join('-') 
+        : obj['Link dos Metadados'] || '-';
+
+    // Substitui quebras de linha nos campos de texto
+    linksMetadados = linksMetadados.replace(/\r?\n|\r/g, ' ');
+
+
+
+    //let resumo = obj['Resumo'].replace(/\r\r\n/g, '\n').replace(/\r?\n/g, ' ');
+    return `${obj['Título']};${obj["Resumo"]};${obj["Identificador"]};${wgs84};${boundingBox};${obj['Palavras Chaves']};${linksMetadados}\n`;
+}
+
+
+/**
+ * cswToCSV recebe o array de objetos a serem transformados, adiciona o cabeçalho do csv e envia para cswObjToCSV.
+ * Após a padronização, os dados são enviados para csvDownload para realizar o download do CSV
+ * 
+ * @param {Object[]} elements - a lista de objetos WFS recebida 
+ */
+/*
+['Título']: title,
+            ["Resumo"]: resumo,
+            ["Identificador"]: identificador,
+            ["WGS84"] : '',
+            ["Bounding Box"]: '',
+            ['Palavras Chaves'] : keywords,
+            ['Link dos Metadados'] : []
+            }
+*/
+export function wcsToCSV(elements){
+    let csvFile = "título;resumo;identificador;wgs84;bounding_box;palavras_chaves;link_dos_metadados\n"
+    elements.forEach(complexType => {
+        csvFile += wcsObjToCSV(complexType);
+    });
+
+    const fileName = 'catalogo_wcs.csv';
+    csvDownload(csvFile,fileName);
+
+}

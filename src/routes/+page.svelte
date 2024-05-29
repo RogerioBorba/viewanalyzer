@@ -18,6 +18,11 @@
       {name: ' Quantidade WFS ', href: '/csw/metadados/protocolo-wfs/quantidade'}, 
       {name: 'Links Quebrados', href: '/csw/links-quebrados'}
     ];
+
+    let menuWCS = [
+      {name: 'Catálogos', href:"/wcs/catalogos"}
+    ];
+
   </script>
   
   <Navbar let:hidden let:toggle>
@@ -46,6 +51,13 @@
               <svelte:component this={item.icon} class="w-4 h-4 mr-2" />{item.name}
             </a>
         </MegaMenu>
+        <NavLi class="cursor-pointer"><Chevron aligned>WCS</Chevron></NavLi>
+        <MegaMenu items={menuWCS} let:item>
+          <a href={item.href} class="flex items-center hover:text-purple-600 dark:hover:text-primary-500">
+            <span class="sr-only">{item.name}</span>
+            <svelte:component this={item.icon} class="w-4 h-4 mr-2" />{item.name}
+          </a>
+      </MegaMenu>
         <NavLi href="/visualizador">Visualizador</NavLi>
     </NavUl>
   </Navbar>
