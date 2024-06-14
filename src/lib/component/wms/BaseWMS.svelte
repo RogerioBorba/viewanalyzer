@@ -4,6 +4,7 @@
     import {catalogos_servicos} from '$lib/inde/CatalogoINDE';
     import { getWMSCapabilitiesObject } from './GetWMSCapabilities.js'
 	import { error } from '@sveltejs/kit';
+  import { onMount } from 'svelte';
     let promise = null
     let firstIDTextIRIObj = { id: 1, text: "Escolha um catálogo", iri: '' }
     let selectedIDTextIRI =  firstIDTextIRIObj
@@ -11,7 +12,7 @@
     function newIRI(obj) {
         return { id: i++, text: obj.descricao, iri: obj.wmsGetCapabilities }
     }
-    let iriArray = [selectedIDTextIRI ].concat(catalogos_servicos.map( (obj) =>  newIRI(obj)))
+    let iriArray = []
     let wmsLayers = []
 	let answer = '';
     let textEntered = ""
@@ -73,6 +74,17 @@
     function onClick(layer) {
         console.log("Nó clicado: ", layer);
     }
+
+    onMount(async() => {
+        try{
+            const response = await fetch("/api/inde/catalogos-servicos")
+            const data = await response.json();
+            iriArray = [selectedIDTextIRI ].concat(catalogos_servicos.map( (obj) =>  newIRI(obj)))
+        } catch (error) {
+            console.error('Failed to fetch catalogos_servicos:', error);
+        }
+    })
+    
 </script>
 
 

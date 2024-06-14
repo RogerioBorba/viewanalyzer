@@ -5,6 +5,7 @@
     import { Progressbar } from 'flowbite-svelte'
     import WMSCapabilityLayer from './WMSCapabilityLayer.svelte'
 	import { currentListWMSCapability } from '$lib/store/storeWMS';
+  import { onMount } from 'svelte';
     let checked;
     let progress = 0;
     let selectedItems = [];
@@ -21,7 +22,8 @@
     let arrWMSLayers = [];
     let qtdRequest = 0;
     let i = 1;
-    let objIdTextIRIArray = catalogos_servicos.map( (obj) => newObjIdTextIRI(obj));
+    let objIdTextIRIArray = [];
+    
     function isChecking() {
         if (!checked) 
             selectedItems = [...objIdTextIRIArray];
@@ -91,7 +93,17 @@
             bgColorBtnSearch = "bg-gray-50";
             
         }
+    
 
+    onMount(async() => {
+        try{
+            const response = await fetch("/api/inde/catalogos-servicos")
+            const data = await response.json();
+            objIdTextIRIArray = data.map((obj) => newObjIdTextIRI(obj));
+        } catch (error) {
+            console.error('Failed to fetch catalogos_servicos:', error);
+        }
+    })
 </script>
 <form class="">
     

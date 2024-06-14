@@ -5,6 +5,7 @@
     import WMSKeywordCard from '$lib/component/wms/WMSKeywordCard.svelte';
     import {dataToPdf} from '$lib/component/pdf/gerarPDF'
     import {keywordsToCSV} from '$lib/component/csv/gerarCSV'
+  import { onDestroy, onMount } from 'svelte';
     
     let selectedItems = [] // {id: number, descricao: string, iri: string}[];
     let selectedCatalogs = []
@@ -18,8 +19,11 @@
     $:  disableButtonAddNewCatalog = (nameCatalog.length == 0 || adressCatalog.length == 0)? true: false
     const newObjIdDescricaoIRI = (obj) => {
         return { id: i++, descricao: obj.descricao, iri: obj.wmsGetCapabilities}
-    }      
-    let objIdDescricaoIRIArray = catalogos_servicos.map( (obj) => newObjIdDescricaoIRI(obj))
+    }     
+
+    //let objIdDescricaoIRIArray = catalogos_servicos.map( (obj) => newObjIdDescricaoIRI(obj))
+    let objIdDescricaoIRIArray = [];
+
     const addNewCatalog = () => {
         let objIdDescricaoIRI = {id: objIdDescricaoIRIArray.length + 1, descricao: nameCatalog, iri: adressCatalog, noCentralCategoria: null}
         objIdDescricaoIRIArray = [...objIdDescricaoIRIArray, objIdDescricaoIRI]
@@ -63,6 +67,16 @@
         }
     });
     }
+
+    onMount(async() => {
+            try{
+                const response = await fetch("/api/inde/catalogos-servicos")
+                const data = await response.json();
+                objIdDescricaoIRIArray = data.map( (obj) => newObjIdDescricaoIRI(obj))
+            } catch (error) {
+                console.error('Failed to fetch catalogos_servicos:', error);
+            }
+        })
 </script>
 <Navbar brand="OGC/WMS Checker"></Navbar>
 <form class="m-2">

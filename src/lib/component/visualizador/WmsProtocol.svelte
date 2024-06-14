@@ -8,8 +8,8 @@
 
   {#each protocols as protocol}
     <div class="p-3 w-2/3 ml-5 mb-2 border-solid border-2  bg-gray-200">
-      <p class="mb-2 text-justify">{protocol.name}</p>
-      <p class="mb-2 text-justify">{protocol.description}</p>
+      <p class="mb-2 text-justify">Nome: {protocol.name}</p>
+      <p class="mb-2 text-justify">Título: {protocol.description}</p>
       {#if protocol.protocol === "OGC:WFS" || protocol.protocol === "OGC:WMS"}
         {#if protocol.protocol === "OGC:WMS"}
           <div class="flex items-center justify-between">

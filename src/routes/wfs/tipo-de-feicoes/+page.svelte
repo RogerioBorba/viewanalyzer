@@ -3,6 +3,7 @@
     import {countTotalSchemaTypeFeatureWFS, countWFSSchemaProcessado} from '$lib/store/storeWFS'
     import Navbar from '$lib/component/base/navbar.svelte'
     import WFSSchemaDescribeFeatureTypeCard from '$lib/component/wfs/WFSSchemaDescribeFeatureTypeCard.svelte';
+  import { onMount } from 'svelte';
     
     let selectedItems = [] // {id: number, descricao: string, iri: string}[];
     let selectedCatalogs = []
@@ -23,7 +24,10 @@
         return { id: i++, descricao: obj.descricao, iri: url}
     }      
 
-    let objIdDescricaoIRIArray = catalogos_servicos.map( (obj) => newObjIdDescricaoIRI(obj)).filter((obj)=> obj != null );
+
+    let objIdDescricaoIRIArray = [];
+    //let objIdDescricaoIRIArray = catalogos_servicos.map( (obj) => newObjIdDescricaoIRI(obj)).filter((obj)=> obj != null );
+    
     const addNewCatalog = () => {
         let objIdDescricaoIRI = {id: objIdDescricaoIRIArray.length + 1, descricao: nameCatalog, iri: adressCatalog, noCentralCategoria: null}
         objIdDescricaoIRIArray = [...objIdDescricaoIRIArray, objIdDescricaoIRI]
@@ -48,6 +52,16 @@
         selectedCatalogs = selectedCatalogs.concat(selectedItems)
         
     }
+
+    onMount(async() => {
+            try{
+                const response = await fetch("/api/inde/catalogos-servicos")
+                const data = await response.json();
+                objIdDescricaoIRIArray = data.map((obj) => newObjIdDescricaoIRI(obj)).filter((obj)=> obj != null );
+            } catch (error) {
+                console.error('Failed to fetch catalogos_servicos:', error);
+            }
+        })
 </script>
 <Navbar brand="OGC/WFS Esquemas das feições"></Navbar>
 <form class="m-2">

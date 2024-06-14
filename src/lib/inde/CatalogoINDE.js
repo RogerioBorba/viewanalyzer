@@ -1,5 +1,8 @@
 import { dataToPdf } from "../component/pdf/gerarPDF";
 import {getData} from "../request/get-data";   
+
+
+
 export let catalogos_servicos = [
     {
     "descricao": "ANA - Agência Nacional de Águas e Saneamento Básico",
@@ -1002,6 +1005,7 @@ let catalogos_ibge =
             catalogos.push(cat)
         }
     })
+
     catalogos_servicos = catalogos
     export const catalogosWMSCapabilities =  catalogos_servicos.map((catalogo) => { return catalogo.wmsGetCapabilities});
 

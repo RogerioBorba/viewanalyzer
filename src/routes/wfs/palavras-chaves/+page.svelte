@@ -5,7 +5,7 @@
     import WFSKeywordCard from '$lib/component/wfs/WFSKeywordCard.svelte';
     import PdfJsObject from '$lib/component/pdf/pdfJSObject.svelte';
   import BaseSelectedLayer from '$lib/component/base/selected_layer/BaseSelectedLayer.svelte';
-  import { onDestroy } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import WfsCsv from '$lib/component/csv/wfsCSV.svelte';
   import {dataToPdf} from '$lib/component/pdf/gerarPDF'
   import {keywordsToCSV} from '$lib/component/csv/gerarCSV'
@@ -28,8 +28,12 @@
     const newObjIdDescricaoIRI = (obj) => {
         
         return { id: i++, descricao: obj.descricao, iri: obj.wfsGetCapabilities}
-    }      
-    let objIdDescricaoIRIArray = catalogos_servicos.filter(obj => obj.wfsGetCapabilities != null).map( (obj) => newObjIdDescricaoIRI(obj))
+    }  
+
+    let objIdDescricaoIRIArray = []
+    //let objIdDescricaoIRIArray = catalogos_servicos.filter(obj => obj.wfsGetCapabilities != null).map( (obj) => newObjIdDescricaoIRI(obj))
+    
+    
     const addNewCatalog = () => {
         let objIdDescricaoIRI = {id: objIdDescricaoIRIArray.length + 1, descricao: nameCatalog, iri: adressCatalog, noCentralCategoria: null}
         objIdDescricaoIRIArray = [...objIdDescricaoIRIArray, objIdDescricaoIRI]
@@ -73,6 +77,15 @@
         }
     });
     
+    onMount(async() => {
+        try{
+            const response = await fetch("/api/inde/catalogos-servicos")
+            const data = await response.json();
+            objIdDescricaoIRIArray = data.filter(obj => obj.wfsGetCapabilities != null).map( (obj) => newObjIdDescricaoIRI(obj))
+        } catch (error) {
+            console.error('Failed to fetch catalogos_servicos:', error);
+        }
+    })
     
 </script>
 <Navbar brand="OGC/WFS Checker"></Navbar>

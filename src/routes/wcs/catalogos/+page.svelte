@@ -3,6 +3,7 @@
     import {countTotalLayer, countTotalLayerWithoutMetadata, countWCSProcessado} from '$lib/store/storeWCS'
     import Navbar from '$lib/component/base/navbar.svelte'
     import WCSCatalogCard from '$lib/component/wcs/WCSCatalogCard.svelte';
+  import { onMount } from 'svelte';
     
     let selectedItems = [] // {id: number, descricao: string, iri: string}[];
     let selectedCatalogs = []
@@ -14,10 +15,27 @@
     let disableButtonAddNewCatalog = true
     $: qtdCatalog = selectedItems.length
     $:  disableButtonAddNewCatalog = (nameCatalog.length == 0 || adressCatalog.length == 0)? true: false
+    
     const newObjIdDescricaoIRI = (obj) => {
-        return { id: i++, descricao: obj.descricao, iri: obj.wcsGetCapabilities}
-    }      
-    let objIdDescricaoIRIArray = catalogos_servicos.map( (obj) => newObjIdDescricaoIRI(obj))
+        let wcsNewLink = ''
+        if(obj.wcsGetCapabilities.includes("service=wcs")){
+           wcsNewLink = obj.wcsGetCapabilities.replace('service=wcs', 'service=WCS')
+        }
+        
+        console.log("LINK EDITADO" + wcsNewLink)
+        
+        return { id: i++, descricao: obj.descricao, iri: wcsNewLink}
+    }
+
+
+    let objIdDescricaoIRIArray = [];
+    
+    /*
+    let objIdDescricaoIRIArray = catalogos_servicos
+    .filter((obj) => obj.wcsGetCapabilities !== null)
+    .map( (obj) => newObjIdDescricaoIRI(obj))
+    */
+
     const addNewCatalog = () => {
         let objIdDescricaoIRI = {id: objIdDescricaoIRIArray.length + 1, descricao: nameCatalog, iri: adressCatalog, noCentralCategoria: null}
         objIdDescricaoIRIArray = [...objIdDescricaoIRIArray, objIdDescricaoIRI]
@@ -42,6 +60,19 @@
         selectedCatalogs = selectedCatalogs.concat(selectedItems)
         
     }
+
+   
+    onMount(async() => {
+            try{
+                const response = await fetch("/api/inde/catalogos-servicos")
+                const data = await response.json();
+                objIdDescricaoIRIArray = data.filter((obj) => obj.wcsGetCapabilities !== null)
+                .map( (obj) => newObjIdDescricaoIRI(obj))
+            } catch (error) {
+                console.error('Failed to fetch catalogos_servicos:', error);
+            }
+        })
+    
 </script>
 <Navbar brand="OGC/WCS Checker"></Navbar>
 <form class="m-2">

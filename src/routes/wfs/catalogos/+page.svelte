@@ -3,6 +3,7 @@
     import {countTotalLayerWFS, countTotalLayerWithoutMetadataWFS, countWFSProcessado} from '$lib/store/storeWFS'
     import Navbar from '$lib/component/base/navbar.svelte'
     import WFSCatalogCard from '$lib/component/wfs/WFSCatalogCard.svelte';
+  import { onMount } from 'svelte';
     
     let selectedItems = [] // {id: number, descricao: string, iri: string}[];
     let selectedCatalogs = []
@@ -14,12 +15,16 @@
     let disableButtonAddNewCatalog = true
     $: qtdCatalog = selectedItems.length
     $:  disableButtonAddNewCatalog = (nameCatalog.length == 0 || adressCatalog.length == 0)? true: false
+
     const newObjIdDescricaoIRI = (obj) => {
         if(!obj.wfsGetCapabilities)
             return null
         return { id: i++, descricao: obj.descricao, iri: obj.wfsGetCapabilities}
-    }      
-    let objIdDescricaoIRIArray = catalogos_servicos.map( (obj) => newObjIdDescricaoIRI(obj)).filter((obj)=> obj != null );
+    } 
+
+    let objIdDescricaoIRIArray = []
+    //let objIdDescricaoIRIArray = catalogos_servicos.map( (obj) => newObjIdDescricaoIRI(obj)).filter((obj)=> obj != null );
+    
     const addNewCatalog = () => {
         let objIdDescricaoIRI = {id: objIdDescricaoIRIArray.length + 1, descricao: nameCatalog, iri: adressCatalog, noCentralCategoria: null}
         objIdDescricaoIRIArray = [...objIdDescricaoIRIArray, objIdDescricaoIRI]
@@ -44,6 +49,18 @@
         selectedCatalogs = selectedCatalogs.concat(selectedItems)
         
     }
+
+    
+    onMount(async() => {
+        try{
+            const response = await fetch("/api/inde/catalogos-servicos")
+            const data = await response.json();
+            objIdDescricaoIRIArray = data.map((obj) => newObjIdDescricaoIRI(obj)).filter((obj)=> obj != null );;
+        } catch (error) {
+            console.error('Failed to fetch catalogos_servicos:', error);
+        }
+    })
+    
 </script>
 <Navbar brand="OGC/WFS Checker"></Navbar>
 <form class="m-2">
