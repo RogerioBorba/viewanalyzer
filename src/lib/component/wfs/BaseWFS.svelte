@@ -6,6 +6,7 @@
 	import { error } from '@sveltejs/kit';
     import { WFSLayer } from './WFSLayer.js';
     import WFSCapabilityLayer from './WFSCapabilityLayer.svelte';
+  import { onMount } from 'svelte';
     let promise = null;
     let firstIDTextIRIObj = { id: 1, text: "Escolha um catálogo", iri: '' };
 
@@ -17,7 +18,7 @@
         return { id: i++, text: obj.descricao, iri: obj.wfsGetCapabilities }
     }
 
-    let iriArray = [selectedIDTextIRI ].concat(catalogos_servicos.map( (obj) =>  newIRI(obj)).filter((obj)=> obj != null ));
+    let iriArray = [];
     let wfsLayers = [];
 	let answer = '';
     let textEntered = "";
@@ -78,6 +79,17 @@
     function onClick(layer) {
         console.log("Nó clicado: ", layer);
     }
+
+    onMount(async() => {
+        try{
+            const response = await fetch("/api/inde/catalogos-servicos")
+            const data = await response.json();
+            iriArray = [selectedIDTextIRI ].concat(data.map( (obj) =>  newIRI(obj)).filter((obj)=> obj != null ));
+        } catch (error) {
+            console.error('Failed to fetch catalogos_servicos:', error);
+        }
+    })
+    
 </script>
 
 

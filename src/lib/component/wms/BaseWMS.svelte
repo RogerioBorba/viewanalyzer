@@ -79,7 +79,7 @@
         try{
             const response = await fetch("/api/inde/catalogos-servicos")
             const data = await response.json();
-            iriArray = [selectedIDTextIRI ].concat(catalogos_servicos.map( (obj) =>  newIRI(obj)))
+            iriArray = [selectedIDTextIRI ].concat(data.map( (obj) =>  newIRI(obj)))
         } catch (error) {
             console.error('Failed to fetch catalogos_servicos:', error);
         }
