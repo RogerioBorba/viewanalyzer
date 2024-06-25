@@ -29,6 +29,57 @@ class MetadataURL {
     }
 
 }
+
+class WGS84BoundingBox {
+    constructor(wgs84BoundingBox) {
+        this.wgs84BoundingBox = wgs84BoundingBox
+        
+    }
+
+    print(){
+        console.log(this.wgs84BoundingBox);
+    }
+
+    splitLowerCorner(){
+        console.log("lower corner" + JSON.stringify(this.wgs84BoundingBox["ows:LowerCorner"]))
+        let lowerCorner = (this.wgs84BoundingBox["ows:LowerCorner"]["#text"]).split(" ");
+        return lowerCorner;
+
+    }
+
+    splitUpperCorner(){
+        console.log("lower corner" + JSON.stringify(this.wgs84BoundingBox["ows:UpperCorner"]))
+        let upperCorner = (this.wgs84BoundingBox["ows:UpperCorner"]["#text"]).split(" ");
+        return upperCorner;
+
+    }
+
+    longitudeLowerCorner() {
+        let longitude = parseFloat(this.splitLowerCorner()[0]);
+        return longitude;
+
+    }
+
+    latitudeLowerCorner() {
+        let latitude = parseFloat(this.splitLowerCorner()[1]);
+        return latitude;
+
+    }
+
+    longitudeUpperCorner() {
+        let longitude = parseFloat(this.splitUpperCorner()[0]);
+        return longitude;
+
+    }
+
+    latitudeUpperCorner() {
+        let latitude = parseFloat(this.splitUpperCorner()[1]);
+        return latitude;
+
+    }
+}
+
+
 export class WFSLayer extends BaseLayer {
     
     constructor(aLayerCapability = null, oid = null, sourceLayer = null, layer=null) {
@@ -128,6 +179,11 @@ export class WFSLayer extends BaseLayer {
             return "Sem metadado associado"
         const list_meta = this.metadataURLs().map(metada => metada.type())
         return list_meta
+    }
+
+    wgs84BoundingBox(){
+        return new WGS84BoundingBox(this.layerCapability['ows:WGS84BoundingBox'])
+        
     }
 
 }

@@ -1,5 +1,7 @@
 <script>
+  import { goto } from '$app/navigation';
     import {facadeOL, selectedLayers } from '$lib/store/storeMap'
+    import {metadataLink} from '$lib/store/storeVisualizadorMetadata'
     
     export let wmsLayer;
     export let capabilitiesUrl;
@@ -9,12 +11,31 @@
     $: if (!wmsLayer.metadataURLs()) visibilytMetadata ='invisible'
       
     async function btnMetadadoClicked() {
+
+        /*
         if (!wmsLayer.metadataURLs())
             return alert("A camada não está associada a metadados.")
             wmsLayer.metadataURLs().forEach(metadataURL => {
                 let link = metadataURL.link() //wmsLayer.metadataURL().link()
                 window.open(link, "_blank");
-            });                
+            });          
+        */
+       
+        if (!wmsLayer.metadataURLs())
+            return alert("A camada não está associada a metadados.")
+
+		wmsLayer.metadataURLs().forEach(metadataURL => {
+			let link = metadataURL.link() //wmsLayer.metadataURL().link()
+			console.log("O link que esta vindo é esse: " + link);
+
+			//Censipam não abre - condição para não quebrar o programa
+			if(link.includes("http://panorama.sipam.gov.br")){
+				window.open(link, "_blank");
+			}else{
+				$metadataLink = link;
+				goto("/visualizador/metadata")
+			}
+		});          
     }
     
     function url() {

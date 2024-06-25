@@ -3,6 +3,7 @@
     import WMSSearchByNomeTitulo from './WMSSearchByNomeTitulo.svelte'
     import BaseWMS from './BaseWMS.svelte'  
 	import WmsSearchByPalavraChave from './WMSSearchByPalavraChave.svelte';
+    import WmsPesquisaEspacial from './WMSPesquisaEspacial.svelte';
 </script>
     
 <Tabs style="underline" >
@@ -16,5 +17,9 @@
     </TabItem>
     <TabItem title='Por palavra chave'>
         <WmsSearchByPalavraChave></WmsSearchByPalavraChave>
+    </TabItem>
+
+    <TabItem title='Pesquisa espacial'>
+        <WmsPesquisaEspacial></WmsPesquisaEspacial>
     </TabItem>
 </Tabs>

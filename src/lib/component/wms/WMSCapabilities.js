@@ -683,6 +683,27 @@ export class WMSCapabilities {
         return allKeywords
     }
 
+    wmsLayersFilteredBygeographicBoundingBox(boundingBox, sourceLayer = null) {
+        let i = 1;
+        let layers = this.layerObjects();
+        if (!layers)
+            return [];
+        const wmsLayers = layers.map(layerObj => new WMSLayer(layerObj, i++, sourceLayer));
+
+        const boundingBoxWest = parseFloat(boundingBox[0].westBoundLongitude);
+        const boundingBoxEast = parseFloat(boundingBox[0].eastBoundLongitude);
+        const boundingBoxSouth = parseFloat(boundingBox[0].southBoundLatitude);
+        const boundingBoxNorth = parseFloat(boundingBox[0].northBoundLatitude);
+
+        return wmsLayers.filter(wmsLayer => { 
+            return (boundingBoxEast < wmsLayer.exGeographicBoundingBox().eastBoundLongitude() &&
+                boundingBoxNorth < wmsLayer.exGeographicBoundingBox().northBoundLatitude() &&
+                    boundingBoxSouth < wmsLayer.exGeographicBoundingBox().southBoundLatitude() &&
+                    boundingBoxWest <  wmsLayer.exGeographicBoundingBox().westBoundLongitude())
+        })
+    }
+   
+
     wmsLayersFilteredByNameOrTitle(nameOrTitle, sourceLayer=null) {
         let i = 1
         let layers = this.layerObjects()

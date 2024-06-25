@@ -19,9 +19,13 @@ wfs:WFS_Capabilities
             
 */
 import { children } from 'svelte/internal'
+import { WFSLayer } from './WFSLayer'
+import { json } from '@sveltejs/kit'
+import { nullBaseTile } from '../openlayers/facade_openlayers'
 //import {WFSLayer} from './WFSLayer'
 
 export class WFSCapabilities {
+    
     constructor(xmlObject) {
         this.xmlObject = xmlObject
     }
@@ -133,6 +137,21 @@ export class WFSCapabilities {
         return featureTyoe['FeatureType'];
     }
 
+
+    featuresObject(){
+        
+            const ft = this.features()
+            console.log("FT" + JSON.stringify(ft))
+            if (!ft)
+                return null
+            let features =  ft['FeatureType']
+            if (!features)
+                return []
+            if (!Array.isArray(features))
+                return [features]        
+            return features
+    }
+
     lenFeatures() {
         return this.features().length;    
     }
@@ -191,6 +210,39 @@ export class WFSCapabilities {
         return this.featuresWithoutKeyword().length;
     }
 
+
+    wfsLayersFilteredByWGS84BoundingBox(wgs84BoundingBox, sourceLayer=null) {
+        let i = 1;
+        let layers = this.features();
+        if (!layers)
+            return [];
+        const wfsLayers = layers.map(layerObj => new WFSLayer(layerObj, i++, sourceLayer));
+
+        const bboxLongitudeLowerCorner = parseFloat(wgs84BoundingBox[0].longitudeLowerCorner);
+        const bboxLatitudeLowerCorner = parseFloat(wgs84BoundingBox[0].latitudeLowerCorner);
+        const bboxLongitudeUpperCorner = parseFloat(wgs84BoundingBox[0].longitudeUpperCorner);
+        const bboxLatitudeUpperCorner = parseFloat(wgs84BoundingBox[0].latitudeUpperCorner);
+
+        return wfsLayers.filter(wfs => { 
+            return (bboxLongitudeLowerCorner < wfs.wgs84BoundingBox().longitudeLowerCorner() &&
+                bboxLatitudeLowerCorner <  wfs.wgs84BoundingBox().latitudeLowerCorner() &&
+                bboxLongitudeUpperCorner < wfs.wgs84BoundingBox().longitudeUpperCorner() &&
+                bboxLatitudeUpperCorner <  wfs.wgs84BoundingBox().latitudeUpperCorner())
+        })
+    }
+
+    wfsLayersFilteredByNameOrTitle(nameOrTitle, sourceLayer=null) {
+        let i = 1
+        let layers = this.features()
+        console.log("LAYERS" + JSON.stringify(layers))
+        if (!layers)
+            return []
+        const wfsLayers =  layers.map(layerObj => new WFSLayer(layerObj, i++, sourceLayer))
+        return wfsLayers.filter(wfsLayer => 
+            (wfsLayer.title() && wfsLayer.title().toLowerCase().includes(nameOrTitle.toLowerCase())) ||
+            (wfsLayer.name() && wfsLayer.name().toLowerCase().includes(nameOrTitle.toLowerCase()))
+        )
+    }
 
 }
 //module.exports=WMSCapabilities
