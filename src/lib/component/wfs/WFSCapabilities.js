@@ -244,5 +244,49 @@ export class WFSCapabilities {
         )
     }
 
+
+    includesAny(array1, array2) {
+        if (array2.length == 0)
+            return true
+        let keywordListString = array1.toString().toLowerCase()  ;
+        
+        for (let i = 0; i < array2.length; i++) {
+            if (keywordListString.includes(array2[i].toLowerCase())) 
+                return true;
+        }
+        return false;
+    }
+
+    includesAll(array1, array2) {
+        if (array2.length == 0)
+            return true
+        
+        let keywordListString = array1.toString().toLowerCase();
+        for (let i = 0; i < array2.length; i++) {
+            if (!keywordListString.includes(array2[i].toLowerCase()))
+                return false;
+        }
+        return true;
+    }
+
+    wfsLayersFilteredByKeywords(keywordsArray, sourceLayer=null) {
+        let i = 1
+        let ors = keywordsArray.filter((ikl) => ikl.logicalOperator == 'or').map((ikl) => { return ikl.keyword})
+        let ands = keywordsArray.filter((ikl) => ikl.logicalOperator == 'and').map((ikl) => { return ikl.keyword})
+        let layers = this.features()
+        if (!layers)
+            return []
+        const wfsLayers =  layers.map(layerObj => new WFSLayer(layerObj, i++, sourceLayer))
+        
+        let wfsLayersFiltered = wfsLayers.filter(wfsLayer =>   
+            (wfsLayer.keywords() &&
+              this.includesAny(wfsLayer.keywords(), ors) &&
+              this.includesAll(wfsLayer.keywords(), ands)
+              ));
+              
+        return wfsLayersFiltered
+        
+    }
+
 }
 //module.exports=WMSCapabilities

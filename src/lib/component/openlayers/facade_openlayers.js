@@ -14,6 +14,7 @@ import Layer from 'ol/layer/Layer.js';
 import ImageLayer from 'ol/layer/Image';
 import VectorLayer from 'ol/layer/Vector';
 import VectorImageLayer from 'ol/layer/VectorImage.js';
+import Draw from 'ol/interaction/Draw';
 
 
 import { ImageStatic, ImageWMS, Vector, XYZ, TileImage } from 'ol/source';
@@ -23,6 +24,9 @@ import GeoJSON from 'ol/format/GeoJSON';
 import { WMSCapabilityLayer} from './LayerResource';
 import { browser} from '$app/environment';
 import {fetchData} from '$lib/request/requestData.ts';
+import VectorSource from 'ol/source/Vector';
+import { Polygon } from 'ol/geom';
+import { Feature } from 'ol';
 
 export const osmBaseTile = new TileLayer({ source: new XYZ({url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'}), zIndex: 0 })
 export const googleBaseTile = new TileLayer({source: new XYZ({url: 'http://mt{0-3}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'}), zIndex: 0})
@@ -55,6 +59,8 @@ export const BaseTiles = {
 };
 
 export class FacadeOL {
+
+    
     constructor(id_map='id_map', coordinates_center=[-4331024.58685793, -1976355.8033415168], a_zoom_value = 4, a_baseLayer_name='OSM' ) {
       this.map = new Map({ target: id_map,  controls:[]});
       this.view = new View({ center: coordinates_center, zoom: a_zoom_value});
@@ -64,6 +70,7 @@ export class FacadeOL {
       this.map.addLayer(this.currentBaseLayer);
       this.addOverlay()  
       this.onClickMap();
+      this.vectorSource = new VectorSource();
     }
     //returns a TileLayer based on name(a_baseLayer_name) or null
     baseLayer(a_baseLayer_name) {
@@ -352,4 +359,74 @@ export class FacadeOL {
     }
     removeHyperResourceLayer(a_HyperResourceLayer) {}
     // End  - These operations are related to the HyperResource
+
+    addRectangles(rectangles) {
+      // Cria um vetor de feições
+      const features = rectangles.map(rect => {
+          const { eastBoundLongitude, northBoundLatitude, southBoundLatitude, westBoundLongitude } = rect;
+          const coordinates = [
+              [
+                  [westBoundLongitude, southBoundLatitude],
+                  [eastBoundLongitude, southBoundLatitude],
+                  [eastBoundLongitude, northBoundLatitude],
+                  [westBoundLongitude, northBoundLatitude],
+                  [westBoundLongitude, southBoundLatitude]
+              ]
+          ];
+          const polygon = new Polygon(coordinates).transform('EPSG:4326', 'EPSG:3857');
+          return new Feature({ geometry: polygon });
+      });
+
+      const vectorSource = new VectorSource({ features });
+      const vectorLayer = new VectorLayer({
+          source: vectorSource,
+          style: new Style({
+              stroke: new Stroke({
+                  color: 'black',
+                  width: 0,
+              }),
+              fill: new Fill({
+                  color: 'rgba(0, 0, 255, 0.0)',
+              }),
+          }),
+      });
+
+      // Adiciona a camada ao mapa
+      this.map.addLayer(vectorLayer);
+  }
+
+
+
+  addDrawInteraction(callback) {
+    const draw = new Draw({
+        source: this.vectorSource,
+        type: 'Polygon', // Pode ser 'Circle', 'LineString', 'Polygon', 'Point'
+    });
+
+    this.map.addInteraction(draw);
+
+    draw.on('drawend', (event) => {
+        const geometry = event.feature.getGeometry();
+        const extent = geometry.getExtent();
+
+        // Converter extent para coordenadas no sistema de projeção do mapa, se necessário
+        const [westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude] = extent;
+
+        callback({
+            westBoundLongitude,
+            southBoundLatitude,
+            eastBoundLongitude,
+            northBoundLatitude
+        });
+    });
+
+    this.drawInteraction = draw;
+}
+
+  removeDrawInteraction() {
+      if (this.drawInteraction) {
+          this.map.removeInteraction(this.drawInteraction);
+          this.drawInteraction = null;
+      }
+  }
 }

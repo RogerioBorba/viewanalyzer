@@ -1,11 +1,13 @@
 <script>
     import {catalogos_servicos} from '$lib/inde/CatalogoINDE'
+    import { getWFSCapabilitiesObject } from './WFSCapabilitiesObject.js';
     import { Radio } from 'flowbite-svelte'
-    import {getWMSCapabilitiesObject} from '$lib/component/wms/GetWMSCapabilities'
     import { Progressbar } from 'flowbite-svelte'
-    import WMSCapabilityLayer from './WMSCapabilityLayer.svelte'
+    import WFSCapabilityLayer from './WFSCapabilityLayer.svelte'
 	import { currentListWMSCapability } from '$lib/store/storeWMS';
-  import { onMount } from 'svelte';
+    import { onMount } from 'svelte';
+
+
     let checked;
     let progress = 0;
     let selectedItems = [];
@@ -19,13 +21,13 @@
     let bgColorBtnSearch = "bg-gray-200";
     
     let disableButtonRealizarRequest = true;
-    let arrWMSLayers = [];
+    let arrWFSLayers = [];
     let qtdRequest = 0;
     let i = 1;
     let objIdTextIRIArray = [];
 
     function reset(){
-        arrWMSLayers = [];
+        arrWFSLayers = [];
         qtdRequest = 0;
 
     }
@@ -40,18 +42,18 @@
     }
 
     function newObjIdTextIRI(obj) {
-        return { id: i++, text: obj.descricao, iri: obj.wmsGetCapabilities }
+        return { id: i++, text: obj.descricao, iri: obj.wfsGetCapabilities }
     }
 
     async function capabilityObject(idTextIRI) {
-        let wmsCapabilities = await getWMSCapabilitiesObject(idTextIRI)
+        let wfsCapabilities = await getWFSCapabilitiesObject(idTextIRI)
         //$currentListWMSCapability = [...$currentListWMSCapability, result]
         qtdRequest++;
-        if (!wmsCapabilities)
+        if (!wfsCapabilities)
             return console.log(`A requisição ${idTextIRI.iri} falhou.`);
-        let arrLayers = wmsCapabilities.wmsLayersFilteredByKeywords(keywords, idTextIRI.iri)
+        let arrLayers = wfsCapabilities.wfsLayersFilteredByKeywords(keywords, idTextIRI.iri)
        
-        arrWMSLayers  = arrWMSLayers.concat(arrLayers)
+        arrWFSLayers  = arrWFSLayers.concat(arrLayers)
         
     }
 
@@ -75,7 +77,7 @@
             //selectedItems.map((idTextIRI) => {return capabilityObject(idTextIRI)})
         let promisesCapabilityObject = selectedItems.map((idTextIRI) => {return capabilityObject(idTextIRI)})
         await Promise.all(promisesCapabilityObject).then( ).catch((error) => {console.error(error.message);});
-        if (arrWMSLayers.length == 0)
+        if (arrWFSLayers.length == 0)
             alert("Não há camadas para esta pesquisa");
         
     }
@@ -163,9 +165,9 @@
     </ul>
     <Progressbar progress={progress} size="h-1.5" />
     <p class = "w-full text-sm text-center truncate text-blue-600 animate-pulse">{instituicaoText}</p>
-    {#each arrWMSLayers as layer, index}
+    {#each arrWFSLayers as layer, index}
         
-        <WMSCapabilityLayer wmsLayer={layer} capabilitiesUrl= {layer.sourceLayer}></WMSCapabilityLayer>
+        <WFSCapabilityLayer wfsLayer={layer} capabilitiesUrl= {layer.sourceLayer}></WFSCapabilityLayer>
     {/each}    
     
 </form>

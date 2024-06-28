@@ -44,11 +44,19 @@
         
     }
 
+    function reset(){
+        arrWMSLayers = [];
+        qtdRequest = 0;
+
+    }
+
     async function btnSearchClicked() {
+        reset();
         //console.log(selectedItems)
         //selectedItems.map((idTextIRI) => {return capabilityObject(idTextIRI)})
         let promisesCapabilityObject = selectedItems.map((idTextIRI) => {return capabilityObject(idTextIRI)})
         await Promise.all(promisesCapabilityObject).then().catch((error) => {console.error(error.message);});
+    
     }
 
     $: if (selectedItems.length > 0 && nameTile.length > 1 ) {

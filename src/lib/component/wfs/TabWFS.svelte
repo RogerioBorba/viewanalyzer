@@ -3,6 +3,7 @@
     import BaseWFS from './BaseWFS.svelte'  
     import WfsSearchByNomeTitulo from './WFSSearchByNomeTitulo.svelte';
 	import WfsPesquisaEspacial from './WFSPesquisaEspacial.svelte';
+    import WfsSearchByPalavraChave from './WFSSearchByPalavraChave.svelte'
 </script>
     
 <Tabs style="underline" >
@@ -15,7 +16,7 @@
         
     </TabItem>
     <TabItem title='Por palavra chave'>
-        
+        <WfsSearchByPalavraChave/>
     </TabItem>
 
     <TabItem title='Pesquisa espacial'>

@@ -21,6 +21,12 @@
 
     let objIdTextIRIArray = [];
 
+    function reset(){
+        arrWFSLayers = [];
+        qtdRequest = 0;
+
+    }
+
     function isChecking() {
         if (!checked) 
             selectedItems = [...objIdTextIRIArray];
@@ -46,6 +52,7 @@
     }
 
     async function btnSearchClicked() {
+        reset();
         //console.log(selectedItems)
         //selectedItems.map((idTextIRI) => {return capabilityObject(idTextIRI)})
         let promisesCapabilityObject = selectedItems.map((idTextIRI) => {return capabilityObject(idTextIRI)})

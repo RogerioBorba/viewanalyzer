@@ -4,7 +4,8 @@
     import {getWMSCapabilitiesObject} from '$lib/component/wms/GetWMSCapabilities'
     import { Progressbar } from 'flowbite-svelte'
     import WMSCapabilityLayer from './WMSCapabilityLayer.svelte'
-	import { currentListWMSCapability } from '$lib/store/storeWMS';
+	import { currentListWMSCapability, drawnBoundingBox } from '$lib/store/storeWMS';
+    import {filteredCoordinate} from '$lib/store/storeWMS'
     import { onMount } from 'svelte';
 
     let westBoundLongitude = '';
@@ -24,13 +25,47 @@
     let bgColorBtnAdd = "bg-gray-50";
     let colorBtnSearch ="text-gray-100";
     let bgColorBtnSearch = "bg-gray-200";
-    
+    let coordinates = []
     let disableButtonRealizarRequest = true;
     let arrWMSLayers = [];
     let qtdRequest = 0;
     let i = 1;
     let objIdTextIRIArray = [];
+    let drawnCoordinates = [];
+
+
     
+    //drawn openlayer
+    // Função para atualizar um mapa com as coordenadas desenhadas
+    function updateMapWithCoordinates(coords) {
+        console.log("Atualizando mapa com coordenadas:", coords);
+        Object.keys(coords).forEach(key => {
+        coords[key] = moveDecimalPoint(coords[key]);
+        })
+
+        westBoundLongitude = coords.westBoundLongitude || '';
+        eastBoundLongitude = coords.eastBoundLongitude || '';
+        southBoundLatitude = coords.southBoundLatitude || '';
+        northBoundLatitude = coords.northBoundLatitude || '';
+
+        // Implemente lógica para atualizar seu mapa com as novas coordenadas
+    }
+
+
+    drawnBoundingBox.subscribe(value => {
+        drawnCoordinates = value; // Atualize drawnCoordinates com o valor do store
+        // Aqui você pode chamar funções ou lógicas que precisem das coordenadas desenhadas atualizadas
+        updateMapWithCoordinates(drawnCoordinates); // Exemplo de função para atualizar um mapa
+    });
+
+    function moveDecimalPoint(value) {
+        let stringValue = value.toString(); // converte para string
+        let newValue = stringValue.slice(0, 3) + '.' + stringValue.slice(3); // move o ponto decimal
+        return parseFloat(newValue); // converte de volta para número
+    }
+
+    /*-------------------------------------------*/
+
     function isChecking() {
         if (!checked) 
             selectedItems = [...objIdTextIRIArray];
@@ -38,6 +73,16 @@
             selectedItems =[]
         }
         checked = !checked
+    }
+
+
+    //adicionei para testar mapas
+    function newCoordinate(wms){
+        return {id: i++, eastBoundLongitude: wms.exGeographicBoundingBox().eastBoundLongitude(),
+            northBoundLatitude: wms.exGeographicBoundingBox().northBoundLatitude(),
+            southBoundLatitude: wms.exGeographicBoundingBox().southBoundLatitude(),
+            westBoundLongitude: wms.exGeographicBoundingBox().westBoundLongitude()      
+        }
     }
 
     function newObjIdTextIRI(obj) {
@@ -54,16 +99,31 @@
         //console.log("wmsCapabilities" + JSON.stringify(wmsCapabilities));
         let arrLayers = wmsCapabilities.wmsLayersFilteredBygeographicBoundingBox(geographicBoundingBox, idTextIRI.iri);
        
-       
+        //adicionei para testas mapa
+        arrLayers.forEach(wms => {
+            coordinates = [...coordinates, newCoordinate(wms)]    
+        })
+
+
+        //filteredCoordinate.set(coordinates);
+        console.log("coordenadas" + JSON.stringify(coordinates));
+
         arrWMSLayers  = arrWMSLayers.concat(arrLayers)
-        
+         
     }
 
     function removeBoundingBox(id) {
         geographicBoundingBox = geographicBoundingBox.filter((key) => key.id != id );
     }
 
+    function reset(){
+        arrWMSLayers = [];
+        qtdRequest = 0;
+
+    }
+
     async function addBoundingBox() {
+        
         //let obj = {keyword: keyword, logicalOperator: logicalOperator, id: (geographicBoundingBox.length + 1)}
         let obj = {westBoundLongitude: westBoundLongitude, eastBoundLongitude: eastBoundLongitude, southBoundLatitude: southBoundLatitude,
             northBoundLatitude: northBoundLatitude, logicalOperator: logicalOperator, id: (geographicBoundingBox.length +1)
@@ -77,6 +137,7 @@
     }
 
     async function btnSearchClicked() {
+        reset();
         addBoundingBox()
         console.log("tamanho bouding box " + geographicBoundingBox.length)
         console.log("bounding box" + JSON.stringify(geographicBoundingBox))
@@ -93,6 +154,7 @@
             alert("Não há camadas para esta pesquisa");
 
         geographicBoundingBox = [];
+        drawnBoundingBox.set([]);
         
         
     }
@@ -136,6 +198,8 @@
             bgColorBtnSearch = "bg-gray-50";
         }
 
+    
+
     onMount(async() => {
         try{
             const response = await fetch("/api/inde/catalogos-servicos")
@@ -144,6 +208,10 @@
         } catch (error) {
             console.error('Failed to fetch catalogos_servicos:', error);
         }
+
+        
+
+
     })
 </script>
 <form class="">

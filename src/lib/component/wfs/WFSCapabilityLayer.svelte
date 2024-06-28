@@ -16,7 +16,6 @@
       
     async function btnMetadadoClicked() {
         if (!wfsLayer.metadataURLs()){
-            console.log("Não tem nada")
             return alert("A camada não está associada a metadados.")
         }
         //console.log("wfsLayer.metadataURLs()>", wfsLayer.metadataURLs());
