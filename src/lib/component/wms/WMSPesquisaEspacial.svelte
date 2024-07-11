@@ -4,7 +4,8 @@
     import {getWMSCapabilitiesObject} from '$lib/component/wms/GetWMSCapabilities'
     import { Progressbar } from 'flowbite-svelte'
     import WMSCapabilityLayer from './WMSCapabilityLayer.svelte'
-	import { currentListWMSCapability, drawnBoundingBox } from '$lib/store/storeWMS';
+	import { currentListWMSCapability, /*drawnBoundingBox*/ } from '$lib/store/storeWMS';
+    import {drawnBoundingBox, clickedButtonOnWFS, clickedButtonOnWMS} from '$lib/store/storeBoudingBox';
     import {filteredCoordinate} from '$lib/store/storeWMS'
     import { onMount } from 'svelte';
 
@@ -32,38 +33,37 @@
     let i = 1;
     let objIdTextIRIArray = [];
     let drawnCoordinates = [];
-
+    let loading = false;
 
     
     //drawn openlayer
     // Função para atualizar um mapa com as coordenadas desenhadas
     function updateMapWithCoordinates(coords) {
         console.log("Atualizando mapa com coordenadas:", coords);
-        Object.keys(coords).forEach(key => {
-        coords[key] = moveDecimalPoint(coords[key]);
-        })
-
+   
         westBoundLongitude = coords.westBoundLongitude || '';
         eastBoundLongitude = coords.eastBoundLongitude || '';
         southBoundLatitude = coords.southBoundLatitude || '';
         northBoundLatitude = coords.northBoundLatitude || '';
 
-        // Implemente lógica para atualizar seu mapa com as novas coordenadas
+  
     }
 
 
     drawnBoundingBox.subscribe(value => {
-        drawnCoordinates = value; // Atualize drawnCoordinates com o valor do store
-        // Aqui você pode chamar funções ou lógicas que precisem das coordenadas desenhadas atualizadas
-        updateMapWithCoordinates(drawnCoordinates); // Exemplo de função para atualizar um mapa
+        drawnCoordinates = value; // Atualiza drawnCoordinates com o valor do store
+        updateMapWithCoordinates(drawnCoordinates); // função para atualizar um mapa
     });
 
-    function moveDecimalPoint(value) {
-        let stringValue = value.toString(); // converte para string
-        let newValue = stringValue.slice(0, 3) + '.' + stringValue.slice(3); // move o ponto decimal
-        return parseFloat(newValue); // converte de volta para número
-    }
 
+    clickedButtonOnWFS.subscribe(bool => {
+        if(bool === true){
+            westBoundLongitude = '';
+            eastBoundLongitude = '';
+            southBoundLatitude = '';
+            northBoundLatitude = '';
+        }
+    })
     /*-------------------------------------------*/
 
     function isChecking() {
@@ -90,16 +90,17 @@
     }
 
     async function capabilityObject(idTextIRI) {
+       
         let wmsCapabilities = await getWMSCapabilitiesObject(idTextIRI)
         //$currentListWMSCapability = [...$currentListWMSCapability, result]
         qtdRequest++;
         if (!wmsCapabilities)
             return console.log(`A requisição ${idTextIRI.iri} falhou.`);
         
-        //console.log("wmsCapabilities" + JSON.stringify(wmsCapabilities));
+        console.log("wmsCapabilities" + JSON.stringify(wmsCapabilities));
         let arrLayers = wmsCapabilities.wmsLayersFilteredBygeographicBoundingBox(geographicBoundingBox, idTextIRI.iri);
        
-        //adicionei para testas mapa
+        //adicionei para testar mapa
         arrLayers.forEach(wms => {
             coordinates = [...coordinates, newCoordinate(wms)]    
         })
@@ -109,6 +110,7 @@
         console.log("coordenadas" + JSON.stringify(coordinates));
 
         arrWMSLayers  = arrWMSLayers.concat(arrLayers)
+        arrLayers = [];
          
     }
 
@@ -139,6 +141,8 @@
     async function btnSearchClicked() {
         reset();
         addBoundingBox()
+        clickedButtonOnWMS.set(true);
+        clickedButtonOnWMS.set(false);
         console.log("tamanho bouding box " + geographicBoundingBox.length)
         console.log("bounding box" + JSON.stringify(geographicBoundingBox))
         if(geographicBoundingBox.length == 0)
@@ -148,11 +152,15 @@
             //selectedItems.map((idTextIRI) => {return capabilityObject(idTextIRI)})
         
         console.log("selectedItems" + JSON.stringify(selectedItems));
+        loading = true;
         let promisesCapabilityObject = selectedItems.map((idTextIRI) => {return capabilityObject(idTextIRI)})
         await Promise.all(promisesCapabilityObject).then( ).catch((error) => {console.error(error.message);});
+        loading = false;
         if (arrWMSLayers.length == 0)
             alert("Não há camadas para esta pesquisa");
-
+        
+        
+        
         geographicBoundingBox = [];
         drawnBoundingBox.set([]);
         
@@ -243,18 +251,7 @@
         <input class="appearance-none w-full h-8 shadow-sm border text-sm border-gray-200 p-2 mr-1 focus:outline-none focus:border-gray-500 rounded-lg"  type="text" placeholder="northBound Latitude" 
         bind:value={northBoundLatitude}>
 
-         <!---
-        <button class="focus:outline-none hover:{bgColorBtnAdd} font-bold pt-1 pl-1 rounded inline-flex items-center" 
-        on:click|preventDefault={addBoundingBox} title="Adicionar dimensões" disabled={false}>
-            <svg width="20" height="20" viewBox="0 0 24 24">
-                <path fill="{colorBtnAdd}" d="M11 9V5H9v4H5v2h4v4h2v-4h4V9h-4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20z" /></svg>
-        </button>   
         
-        <div class = "flex flex-col md:flex-row gap-0 border rounded-lg border-gray-200 ">
-            <Radio name="hor-list" class="p-3" bind:group={logicalOperator} value="and">And</Radio>
-            <Radio name="hor-list" class="p-3" bind:group={logicalOperator}  value="or">Or</Radio>
-        </div>
-        ----->
         <button class="focus:outline-none hover:{bgColorBtnSearch} font-bold py-1 px-1 rounded inline-flex items-center" 
         on:click|preventDefault={btnSearchClicked} title="Realizar requisição" disabled={disableButtonRealizarRequest}>
             <svg width="20" height="20" viewBox="0 0 24 24">
@@ -268,21 +265,11 @@
 			</option>
 		{/each}
 	</select>
-    <!--   
-    <ul class="flex flex-col m-1">
-        {#each geographicBoundingBox as obj (obj.id) }
-            <li class="flex bg-slate-200 items-center">
-               <span class="items-center"> {obj.westBoundLongitude} {obj.eastBoundLongitude} {southBoundLatitude} {northBoundLatitude} </span>
-               <button class="mx-1 focus:outline-none font-bold pt-1 pl-1 rounded hover:{bgColorBtnAdd}" 
-               on:click={removeBoundingBox(obj.id)} title="Remover coordenadas" disabled={false}>
-                  <svg width="20" height="20" viewBox="0 0 24 24">
-                      <path fill="red" d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zM11.4 10l2.83-2.83-1.41-1.41L10 8.59 7.17 5.76 5.76 7.17 8.59 10l-2.83 2.83 1.41 1.41L10 11.41l2.83 2.83 1.41-1.41L11.41 10z" /></svg>
-              </button>   
-            </li>
-        {/each}
-    </ul>
-    ---> 
+  
     <Progressbar progress={progress} size="h-1.5" />
+    {#if loading === true}
+        <p class = "text-xl text-center text-blue-600 animate-pulse">...aguarde</p>
+    {/if}
     <p class = "w-full text-sm text-center truncate text-blue-600 animate-pulse">{instituicaoText}</p>
     {#each arrWMSLayers as layer, index}
         

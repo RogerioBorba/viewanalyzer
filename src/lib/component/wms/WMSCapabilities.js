@@ -686,21 +686,32 @@ export class WMSCapabilities {
     wmsLayersFilteredBygeographicBoundingBox(boundingBox, sourceLayer = null) {
         let i = 1;
         let layers = this.layerObjects();
-        if (!layers)
-            return [];
+        if (!layers) return [];
+    
         const wmsLayers = layers.map(layerObj => new WMSLayer(layerObj, i++, sourceLayer));
-
+        wmsLayers.forEach(wms => console.log("referencia geográfica", JSON.stringify(wms.exGeographicBoundingBox())));
+    
         const boundingBoxWest = parseFloat(boundingBox[0].westBoundLongitude);
         const boundingBoxEast = parseFloat(boundingBox[0].eastBoundLongitude);
         const boundingBoxSouth = parseFloat(boundingBox[0].southBoundLatitude);
         const boundingBoxNorth = parseFloat(boundingBox[0].northBoundLatitude);
-
-        return wmsLayers.filter(wmsLayer => { 
-            return (boundingBoxEast < wmsLayer.exGeographicBoundingBox().eastBoundLongitude() &&
-                boundingBoxNorth < wmsLayer.exGeographicBoundingBox().northBoundLatitude() &&
-                    boundingBoxSouth < wmsLayer.exGeographicBoundingBox().southBoundLatitude() &&
-                    boundingBoxWest <  wmsLayer.exGeographicBoundingBox().westBoundLongitude())
-        })
+    
+        return wmsLayers.filter(wmsLayer => {
+            const wmsBoundingBox = wmsLayer.exGeographicBoundingBox();
+            const wmsWest = wmsBoundingBox.westBoundLongitude();
+            const wmsEast = wmsBoundingBox.eastBoundLongitude();
+            const wmsSouth = wmsBoundingBox.southBoundLatitude();
+            const wmsNorth = wmsBoundingBox.northBoundLatitude();
+    
+            console.log(`Checando WMS Layer: West ${wmsWest}, East ${wmsEast}, South ${wmsSouth}, North ${wmsNorth}`);
+            console.log(`Checando BOUNDING BOX Layer: West ${boundingBoxWest}, East ${boundingBoxEast}, South ${boundingBoxSouth}, North ${boundingBoxNorth}`);
+    
+            return (
+                wmsWest >= boundingBoxWest &&
+                wmsEast <= boundingBoxEast &&
+                wmsSouth >= boundingBoxSouth &&
+                wmsNorth <= boundingBoxNorth);
+        });
     }
    
 

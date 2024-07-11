@@ -65,6 +65,8 @@
 	async function btnMetadadoClicked() {
 
 		console.log(JSON.stringify(wmsLayer))
+		console.log("Geographic Bounding box" + JSON.stringify(wmsLayer.exGeographicBoundingBox()))
+
         if (!wmsLayer.metadataURLs())
             return alert("A camada não está associada a metadados.")
 

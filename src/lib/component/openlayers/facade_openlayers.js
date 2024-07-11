@@ -3,7 +3,7 @@
 //import Popup from 'ol-popup/';
 import { Fill} from 'ol/style';
 import {toStringHDMS} from 'ol/coordinate';
-import { transform } from 'ol/proj';
+import { transform, transformExtent } from 'ol/proj';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay';
 import View from 'ol/View';
@@ -408,9 +408,10 @@ export class FacadeOL {
     draw.on('drawend', (event) => {
         const geometry = event.feature.getGeometry();
         const extent = geometry.getExtent();
-
+        const transformedExtent = transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
         // Converter extent para coordenadas no sistema de projeção do mapa, se necessário
-        const [westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude] = extent;
+        console.log("DIGITADO " + transformedExtent);
+        const [westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude] = transformedExtent;
 
         callback({
             westBoundLongitude,

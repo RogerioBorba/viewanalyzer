@@ -223,13 +223,31 @@ export class WFSCapabilities {
         const bboxLongitudeUpperCorner = parseFloat(wgs84BoundingBox[0].longitudeUpperCorner);
         const bboxLatitudeUpperCorner = parseFloat(wgs84BoundingBox[0].latitudeUpperCorner);
 
-        return wfsLayers.filter(wfs => { 
-            return (bboxLongitudeLowerCorner < wfs.wgs84BoundingBox().longitudeLowerCorner() &&
-                bboxLatitudeLowerCorner <  wfs.wgs84BoundingBox().latitudeLowerCorner() &&
-                bboxLongitudeUpperCorner < wfs.wgs84BoundingBox().longitudeUpperCorner() &&
-                bboxLatitudeUpperCorner <  wfs.wgs84BoundingBox().latitudeUpperCorner())
-        })
+
+        return wfsLayers.filter(wfsLayer => {
+            const wfsBoundingBox = wfsLayer.wgs84BoundingBox();
+            console.log("WFS BOUDING BOX" + JSON.stringify(wfsBoundingBox))
+            const wfsLatitudeLowerCorner = wfsBoundingBox.latitudeLowerCorner();
+            const wfsLongitudeLowerCorner = wfsBoundingBox.longitudeLowerCorner();
+            const wfsLatitudeUpperCorner = wfsBoundingBox.latitudeUpperCorner();
+            const wfsLongitudeUpperCorner = wfsBoundingBox.longitudeUpperCorner();
+             
+            console.log(`Checando WFS Layer: latitude lower corner ${wfsLatitudeLowerCorner}, longitutde lower corner ${wfsLongitudeLowerCorner}, latitude upper ${wfsLatitudeUpperCorner}}, longitude upper ${wfsLongitudeUpperCorner}`);
+            console.log(`Checando BOUNDING BOX Layer: latitude lower corner ${bboxLatitudeLowerCorner}, longitutde lower corner ${bboxLongitudeLowerCorner}, latitude upper ${bboxLatitudeUpperCorner}, longitude upper ${bboxLatitudeUpperCorner}`);
+
+            return (
+                wfsLongitudeLowerCorner >= bboxLongitudeLowerCorner &&
+                wfsLongitudeUpperCorner <= bboxLongitudeUpperCorner && 
+                wfsLatitudeLowerCorner >= bboxLatitudeLowerCorner &&
+                wfsLatitudeUpperCorner <= bboxLatitudeUpperCorner);
+
+            
+            
+        });
+
     }
+    
+     
 
     wfsLayersFilteredByNameOrTitle(nameOrTitle, sourceLayer=null) {
         let i = 1

@@ -5,6 +5,7 @@
     import { Progressbar } from 'flowbite-svelte'
     import WFSCapabilityLayer from './WFSCapabilityLayer.svelte'
 	import { currentListWFSCapability } from '$lib/store/storeWFS';
+    import {drawnBoundingBox, clickedButtonOnWFS, clickedButtonOnWMS} from '$lib/store/storeBoudingBox'
     import { onMount } from 'svelte';
 
     let longitudeLowerCorner = '';
@@ -24,12 +25,52 @@
     let bgColorBtnAdd = "bg-gray-50";
     let colorBtnSearch ="text-gray-100";
     let bgColorBtnSearch = "bg-gray-200";
-    
+    let drawnCoordinates = [];
+    let coordinates = []
+    let loading = false;
     let disableButtonRealizarRequest = true;
     let arrWFSLayers = [];
     let qtdRequest = 0;
     let i = 1;
     let objIdTextIRIArray = [];
+
+
+    //drawn openlayer
+    // Função para atualizar um mapa com as coordenadas desenhadas
+    function updateMapWithCoordinates(coords) {
+        console.log("Atualizando mapa com coordenadas:", coords);
+   
+        longitudeLowerCorner = coords.westBoundLongitude || '';
+        latitudeLowerCorner = coords.southBoundLatitude || '';
+        longitudeUpperCorner = coords.eastBoundLongitude || '';
+        latitudeUpperCorner = coords.northBoundLatitude || '';
+
+  
+    }
+
+
+    drawnBoundingBox.subscribe(value => {
+        drawnCoordinates = value; // Atualiza drawnCoordinates com o valor do store
+        updateMapWithCoordinates(drawnCoordinates); // função para atualizar um mapa
+    });
+
+    clickedButtonOnWMS.subscribe(bool => {
+        if(bool === true){
+            longitudeLowerCorner = ''
+            latitudeLowerCorner = ''
+            longitudeUpperCorner = ''
+            latitudeUpperCorner = ''
+        }
+    })
+
+
+    function newCoordinate(wfs){
+        return {id: i++, longitudeLowerCorner: wfs.wgs84BoundingBox().longitudeLowerCorner(),
+            latitudeLowerCorner: wfs.wgs84BoundingBox().latitudeLowerCorner(),
+            longitudeUpperCorner: wfs.wgs84BoundingBox().longitudeUpperCorner(),
+            latitudeUpperCorner: wfs.wgs84BoundingBox().latitudeUpperCorner()      
+        }
+    }
     
     function isChecking() {
         if (!checked) 
@@ -56,8 +97,13 @@
        
         //console.log("WFSCapabilities" + JSON.stringify(WFSCapabilities));
         let arrLayers = wfsCapabilities.wfsLayersFilteredByWGS84BoundingBox(wgs84BoundingBox, idTextIRI.iri);
-       
+        
+        arrLayers.forEach(wfs => {
+            coordinates = [...coordinates, newCoordinate(wfs)]    
+        })
+
         arrWFSLayers  = arrWFSLayers.concat(arrLayers)
+        arrLayers = [];
         
     }
 
@@ -78,8 +124,19 @@
         
     }
 
+    function reset(){
+        arrWFSLayers = [];
+        qtdRequest = 0;
+
+    }
+
     async function btnSearchClicked() {
+
+        reset();
         addBoundingBox()
+        clickedButtonOnWFS.set(true);
+        clickedButtonOnWFS.set(false);
+        
         console.log("tamanho bouding box " + wgs84BoundingBox.length)
         console.log("bounding box" + JSON.stringify(wgs84BoundingBox))
         if(wgs84BoundingBox.length == 0)
@@ -89,14 +146,15 @@
             //selectedItems.map((idTextIRI) => {return capabilityObject(idTextIRI)})
         
         console.log("selectedItems" + JSON.stringify(selectedItems));
+        loading = true;
         let promisesCapabilityObject = selectedItems.map((idTextIRI) => {return capabilityObject(idTextIRI)})
         await Promise.all(promisesCapabilityObject).then().catch((error) => {console.error(error.message);});
-        
+        loading = false;
         if (arrWFSLayers.length == 0)
             alert("Não há camadas para esta pesquisa");
 
         wgs84BoundingBox = [];
-        
+        drawnBoundingBox.set([]);
         
     }
 
@@ -205,6 +263,9 @@
 	</select>
 
     <Progressbar progress={progress} size="h-1.5" />
+    {#if loading === true}
+        <p class = "text-xl text-center text-blue-600 animate-pulse">...aguarde</p>
+    {/if}
     <p class = "w-full text-sm text-center truncate text-blue-600 animate-pulse">{instituicaoText}</p>
     {#each arrWFSLayers as layer, index}
         
