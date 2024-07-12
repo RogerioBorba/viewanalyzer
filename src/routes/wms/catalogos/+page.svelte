@@ -1,5 +1,4 @@
 <script>
-    import {catalogos_servicos} from '$lib/inde/CatalogoINDE'
     import {countTotalLayer, countTotalLayerWithoutMetadata, countWMSProcessado} from '$lib/store/storeWMS'
     import Navbar from '$lib/component/base/navbar.svelte'
     import WMSCatalogCard from '$lib/component/wms/WMSCatalogCard.svelte';

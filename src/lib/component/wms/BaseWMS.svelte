@@ -1,7 +1,6 @@
 <script>
     import {WMSLayer} from './WMSLayer.js'
     import WMSTreeView from './WMSTreeView.svelte';
-    import {catalogos_servicos} from '$lib/inde/CatalogoINDE';
     import { getWMSCapabilitiesObject } from './GetWMSCapabilities.js'
 	import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';

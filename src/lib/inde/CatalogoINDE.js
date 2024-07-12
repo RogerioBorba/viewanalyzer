@@ -543,17 +543,7 @@ export let catalogos_servicos = [
     "wfsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/MTU/ows?service=wfs&request=GetCapabilities&version=1.3.0",
     "wcsGetCapabilities": "https://geoservicos.inde.gov.br/geoserver/MTU/ows?service=wcs&request=GetCapabilities&version=1.1.1"
     },
-    {
-    "descricao": "IBGE/ODS - Objetivos de Desenvolvimento Sustentável ",
-    "url": "https://geoservicos.ibge.gov.br/geoserver/ODS/ows",
-    "nivel_no": "Nacional",
-    "wmsAvailable": true,
-    "wfsAvailable": true,
-    "wcsAvailable": true,
-    "wmsGetCapabilities": "https://geoservicos.ibge.gov.br/geoserver/ODS/ows?service=wms&request=GetCapabilities&version=1.3.0",
-    "wfsGetCapabilities": "https://geoservicos.ibge.gov.br/geoserver/ODS/ows?service=wfs&request=GetCapabilities&version=1.3.0",
-    "wcsGetCapabilities": "https://geoservicos.ibge.gov.br/geoserver/ODS/ows?service=wcs&request=GetCapabilities&version=1.1.1"
-    },
+    
     {
     "descricao": "PGGM - Programa de Geologia e Geofísica Marinha",
     "url": "https://geoservicos.inde.gov.br/geoserver/PGGM/ows",
@@ -981,19 +971,7 @@ let catalogos_ibge =
                 "cswGetCapabilities": "https://metadadosgeo.ibge.gov.br/geonetwork_ibge/srv/por/csw?service=CSW&version=2.0.2&request=GetCapabilities"
             },
             
-            {
-                "descricao": "IBGE - Objetivos de Desenvolvimento Sustentável - ODS",
-                "sigla": "IBGE/ODS",
-                "url": "https://geoservicos.ibge.gov.br/geoserver/ODS/ows",
-                "wmsAvailable": true,
-                "wfsAvailable": true,
-                "wcsAvailable": true,
-                "wmsGetCapabilities": "https://geoservicos.ibge.gov.br/geoserver/ODS/ows?service=wms&request=GetCapabilities&version=1.3.0",
-                "wfsGetCapabilities": "https://geoservicos.ibge.gov.br/geoserver/ODS/ows?service=wfs&request=GetCapabilities&version=1.3.0",
-                "wcsGetCapabilities": "https://geoservicos.ibge.gov.br/geoserver/ODS/ows?service=wcs&request=GetCapabilities&version=1.1.1",
-                "url_metadados": "https://metadadosgeo.ibge.gov.br/geonetwork_ibge",
-                "cswGetCapabilities": "https://metadadosgeo.ibge.gov.br/geonetwork_ibge/srv/por/csw?service=CSW&version=2.0.2&request=GetCapabilities"
-                }
+           
     ]
     let catalogos = []
     catalogos_servicos.forEach(cat => {
