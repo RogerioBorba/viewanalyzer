@@ -5,7 +5,7 @@
     import { Progressbar } from 'flowbite-svelte'
     import WMSCapabilityLayer from './WMSCapabilityLayer.svelte'
 	import { currentListWMSCapability, /*drawnBoundingBox*/ } from '$lib/store/storeWMS';
-    import {drawnBoundingBox, clickedButtonOnWFS, clickedButtonOnWMS} from '$lib/store/storeBoudingBox';
+    import {drawnBoundingBox, clickedButtonOnWFS, clickedButtonOnWMS, drawWasClickedOnWMS, drawWasClicked} from '$lib/store/storeBoudingBox';
     import {filteredCoordinate} from '$lib/store/storeWMS'
     import { onMount } from 'svelte';
 
@@ -34,10 +34,16 @@
     let objIdTextIRIArray = [];
     let drawnCoordinates = [];
     let loading = false;
-
+    let drawn = false;
     
     //drawn openlayer
     // Função para atualizar um mapa com as coordenadas desenhadas
+
+    function activateDrawButton(){
+        drawWasClicked.set(!drawn);
+        
+    }
+
     function updateMapWithCoordinates(coords) {
         console.log("Atualizando mapa com coordenadas:", coords);
    
@@ -251,6 +257,13 @@
         <input class="appearance-none w-full h-8 shadow-sm border text-sm border-gray-200 p-2 mr-1 focus:outline-none focus:border-gray-500 rounded-lg"  type="text" placeholder="northBound Latitude" 
         bind:value={northBoundLatitude}>
 
+        <button class="focus:outline-none hover:{bgColorBtnSearch} font-bold py-1 px-1 rounded inline-flex items-center" 
+        on:click|preventDefault={activateDrawButton} title="Desenhar retângulo para definir coordenadas">
+        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M5 3a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5Zm0 12a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H5Zm12 0a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-2Zm0-12a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2Z"/>
+            <path fill-rule="evenodd" d="M10 6.5a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1ZM10 18a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1Zm-4-4a1 1 0 0 1-1-1v-2a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1Zm12 0a1 1 0 0 1-1-1v-2a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1Z" clip-rule="evenodd"/>
+        </svg>
+        </button>   
         
         <button class="focus:outline-none hover:{bgColorBtnSearch} font-bold py-1 px-1 rounded inline-flex items-center" 
         on:click|preventDefault={btnSearchClicked} title="Realizar requisição" disabled={disableButtonRealizarRequest}>

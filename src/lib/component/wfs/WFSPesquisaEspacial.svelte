@@ -5,7 +5,7 @@
     import { Progressbar } from 'flowbite-svelte'
     import WFSCapabilityLayer from './WFSCapabilityLayer.svelte'
 	import { currentListWFSCapability } from '$lib/store/storeWFS';
-    import {drawnBoundingBox, clickedButtonOnWFS, clickedButtonOnWMS} from '$lib/store/storeBoudingBox'
+    import {drawnBoundingBox, clickedButtonOnWFS, clickedButtonOnWMS, drawWasClickedOnWFS, drawWasClicked} from '$lib/store/storeBoudingBox'
     import { onMount } from 'svelte';
 
     let longitudeLowerCorner = '';
@@ -63,6 +63,11 @@
         }
     })
 
+    function activateDrawButton(){
+        drawWasClicked.set(true);
+    
+    }
+    
 
     function newCoordinate(wfs){
         return {id: i++, longitudeLowerCorner: wfs.wgs84BoundingBox().longitudeLowerCorner(),
@@ -236,18 +241,14 @@
         <input class="appearance-none w-full h-8 shadow-sm border text-sm border-gray-200 p-2 mr-1 focus:outline-none focus:border-gray-500 rounded-lg"  type="text" placeholder="Maior latitude" 
         bind:value={latitudeUpperCorner}>
 
-         <!---
-        <button class="focus:outline-none hover:{bgColorBtnAdd} font-bold pt-1 pl-1 rounded inline-flex items-center" 
-        on:click|preventDefault={addBoundingBox} title="Adicionar dimensões" disabled={false}>
-            <svg width="20" height="20" viewBox="0 0 24 24">
-                <path fill="{colorBtnAdd}" d="M11 9V5H9v4H5v2h4v4h2v-4h4V9h-4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20z" /></svg>
-        </button>   
+        <button class="focus:outline-none hover:{bgColorBtnSearch} font-bold py-1 px-1 rounded inline-flex items-center" 
+        on:click|preventDefault={activateDrawButton} title="Desenhar retângulo para definir coordenadas">
+        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M5 3a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5Zm0 12a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H5Zm12 0a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-2Zm0-12a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2Z"/>
+            <path fill-rule="evenodd" d="M10 6.5a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1ZM10 18a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1Zm-4-4a1 1 0 0 1-1-1v-2a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1Zm12 0a1 1 0 0 1-1-1v-2a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1Z" clip-rule="evenodd"/>
+        </svg>
+        </button> 
         
-        <div class = "flex flex-col md:flex-row gap-0 border rounded-lg border-gray-200 ">
-            <Radio name="hor-list" class="p-3" bind:group={logicalOperator} value="and">And</Radio>
-            <Radio name="hor-list" class="p-3" bind:group={logicalOperator}  value="or">Or</Radio>
-        </div>
-        ----->
         <button class="focus:outline-none hover:{bgColorBtnSearch} font-bold py-1 px-1 rounded inline-flex items-center" 
         on:click|preventDefault={btnSearchClicked} title="Realizar requisição" disabled={disableButtonRealizarRequest}>
             <svg width="20" height="20" viewBox="0 0 24 24">
