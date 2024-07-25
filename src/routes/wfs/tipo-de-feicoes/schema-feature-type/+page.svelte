@@ -9,6 +9,8 @@
     import { json2csv } from 'json-2-csv';
     /*** @type {any[]}*/
     let listaComplexType = [];
+
+    let originalListaComplexType = [];
     /*** @type {any[]}*/
     let listaComplexTypeAsJson = [];
     //variables to Progress component
@@ -17,6 +19,24 @@
     let progress_blink = 'animate-pulse';
     let progress_color =  'text-gray-600';
     let progress_bin = 0.0;
+    
+    let withErrorChecked = false;
+
+    function hasEspecialChar(aString) {
+        const regex = /[^\w_]/;
+        return regex.test(aString.trim());
+    }
+
+    $:{
+        if(!withErrorChecked){
+            listaComplexType = originalListaComplexType;
+        }
+
+        if(withErrorChecked){
+            listaComplexType = listaComplexType.filter(element => element.elementProperties.some( property => hasEspecialChar(property.name)) )
+        }
+    }
+
     
     function complexTypeAsCsvString(complexType) {
         let csvString = ''
@@ -125,9 +145,12 @@
                 const listaDeNome = listaDeListaDeNome[index]
                 const url = urlDescribeFeatureType(listaDeNome)
                 const xml_text = await fetch_xml(url)
+                console.log("XML_TEXT" + JSON.stringify(xml_text));
                 const arrCompleType = await complexTypeList(xml_text)
                 updateProgress()
                 listaComplexType = listaComplexType.concat(arrCompleType)
+                originalListaComplexType = listaComplexType;
+                
             }            
         } catch (error) {
             progress_value = 100
@@ -170,6 +193,10 @@
 <div class="">
     <div class="{progress_blink} mb-1 text-base font-medium {progress_color}  dark:text-blue-500">{progress_status}</div>
     <Progressbar progress={progress_value.toFixed(2)} color="blue" size="h-4" labelInside/>
+</div>
+<div class="flex items-center mt-3 mr-2 justify-end text-base font-medium text-blue-500">
+    <input class="mr-2" type="checkbox" bind:checked={withErrorChecked}>
+    <span class="mr-2 whitespace-nowrap text-sm">Filtrar feições com erros</span>
 </div>
 <div>
     <div class = "m-2 p-1 grid gap-2 md:grid-cols-3 grid-cols-1">

@@ -9,18 +9,20 @@
     
     
     function formatProperty(elementProperty) {
+        console.log(elementProperty);
         return `${elementProperty.name} :  ${elementProperty.typeVar}[${elementProperty.minOccurs}..${elementProperty.maxOccurs}]`
     }
     
     
     function hasEspecialChar(aString) {
         const regex = /[^\w_]/;
-        return regex.test(aString);
+        return regex.test(aString.trim());
     }
 
 </script>
 <div class= "font-semibold p-2 {bgColor} text-sm text-left text-gray-800  rounded-md shadow-sm hover:shadow-md flex flex-col"  transition:fade>
         <h2 class="">Tipo da Feição: {complexType.name}</h2>
+        <!--<h2 class="">Título: {complexType.title}</h2>--->
         <h2 class="font-thin">Quantidade de attributos: {complexType.elementProperties.length}</h2>
        {#each complexType.elementProperties as elementProperty}
             {#if hasEspecialChar (elementProperty.name)}

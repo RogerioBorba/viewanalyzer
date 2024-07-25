@@ -7,6 +7,7 @@
     import { Spinner} from 'flowbite-svelte';
     import { fade } from 'svelte/transition';
     import { xmlDocument } from '$lib/xml-json/utils'
+  import { json } from '@sveltejs/kit';
     export let objIdDescricaoIri;
 
     let tempoRequisicao;
