@@ -3,14 +3,17 @@
     import { textXml2Json } from '$lib/xml-json/xml2Json';
     import { fetchData, fetchDataByType } from '$lib/request/requestData';
     import {metadataLink} from '$lib/store/storeVisualizadorMetadata'
-  import { goto } from '$app/navigation';
-  import { MetadataURL } from '../ogc_commom/metadataURL';
+    import { goto } from '$app/navigation';
+    import { MetadataURL } from '../ogc_commom/metadataURL';
+    import { Fill, Stroke, Style } from 'ol/style';
+    import CircleStyle from 'ol/style/Circle';
     export let wfsLayer = null;
     export let capabilitiesUrl;
     let source = null;
     let sourceLayer = null;
     let display = ''
     let visibilytMetadata ='visible'
+    let featureCount = null;
 
     $: if (!wfsLayer.metadataURLs()) visibilytMetadata ='invisible'
       
@@ -32,6 +35,44 @@
 
         })
     };
+
+     // Função para buscar o número de feições
+     async function fetchFeatureCount() {
+        const baseURL = url();
+        const service = 'WFS';
+        const version = '2.0.0';
+        const request = 'GetFeature';
+        const typeName = wfsLayer.name();
+        console.log("typeName " + typeName)
+        const resultType = 'hits';  
+        let featureCountUrl = `${baseURL}?service=${service}&version=${version}&request=${request}&typeName=${typeName}&resultType=${resultType}`;
+        console.log("featureCountUrl" + featureCountUrl)
+        
+        try {
+            let response = await fetchData(featureCountUrl);
+            let data = await response.text();
+
+        
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(data, "text/xml");
+
+         
+            const featureCollection = xmlDoc.documentElement.getAttribute("numberMatched");
+
+            console.log("FEATURE colletction" + JSON.stringify(featureCollection));
+           
+           
+            featureCount = featureCollection || 0;  // Armazena o total de feições
+        } catch (error) {
+            console.error("Erro ao buscar contagem de feições:", error);
+            featureCount = 'N/A';
+        }
+    }
+
+    $: if (wfsLayer) {
+        fetchFeatureCount();  // Atualiza a contagem de feições quando a camada é carregada
+    }
+
     
     function visibilyBtnMetadata() {
         let hasLink = false;
@@ -49,7 +90,9 @@
         if (size == -1)
             size = capabilitiesUrl.length
         return capabilitiesUrl.substring(0, size)
+        
     }
+
     function urlGetFeature() {
         const baseURL = url();
         const service='WFS';
@@ -59,7 +102,9 @@
         return `${baseURL}?service=WFS&version=${version}&request=GetFeature&typeName=${typeName}&outputFormat=application/json&maxFeatures=15000`
     }
 
-    async function  btnAddLayerClicked() {
+    
+
+    async function btnAddLayerClicked() {
         let z_index = $selectedLayers.length + 1;
         if(!wfsLayer.name())
             return alert("Esta é uma camada de agrupamento. Apenas as camadas interiores podem ser exibidas!");
@@ -82,7 +127,7 @@
 </script>
 <div class="flex mt-1 relative {display} text-gray-700">
     <p class="flex-grow text-grey-darkest hover:bg-red truncate text-left text-xs" 
-    title="{wfsLayer.description()}">{wfsLayer.description()}</p>
+    title="{wfsLayer.description()}">{wfsLayer.description()} ({featureCount} feições)</p>
     <button  class="{visibilyBtnMetadata()} focus:outline-none bg-grey-light hover:bg-grey text-grey-darkest font-bold py-1 px-1 rounded inline-flex items-center hover:bg-gray-200" 
     on:click|preventDefault={btnMetadadoClicked} title="Metadados">
         <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px" class="h-6 w-6" fill="#FCF3CF" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -101,4 +146,3 @@
         </svg>   
     </button>
 </div>
-

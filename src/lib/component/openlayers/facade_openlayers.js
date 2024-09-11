@@ -176,6 +176,8 @@ export class FacadeOL {
       const vector_source = new Vector({features: gjson_format});
       const vector_layer = new VectorImageLayer({ source: vector_source });
       //const vector_layer = new VectorLayer({ source: vector_source });
+
+      console.log("vector style" + JSON.stringify(vector_layer.getStyle()))
       vector_layer.map = this.map;
       if (style)
           vector_layer.setStyle(style)
