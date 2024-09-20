@@ -33,10 +33,15 @@
     const start = i;
     event.dataTransfer.setData('text/plain', start);
   }
-    
+  
+  $: if($selectedLayers){
+    console.log($selectedLayers)
+  }
+
 </script>
 
 {#each $selectedLayers as layer, index (index) }
+  
     <div class= "border rounded-bl-md active:bg-slate-400 mt-1 px-1" animate:flip
     draggable={true} 
     on:dragstart={event => dragstart(event, index)}
