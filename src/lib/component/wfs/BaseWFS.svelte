@@ -7,6 +7,7 @@
     import { WFSLayer } from './WFSLayer.js';
     import WFSCapabilityLayer from './WFSCapabilityLayer.svelte';
   import { onMount } from 'svelte';
+  import { identity } from 'svelte/internal';
     let promise = null;
     let firstIDTextIRIObj = { id: 1, text: "Escolha um catálogo", iri: '' };
 
@@ -126,9 +127,9 @@
        <input class="w-full h-8 pl-3 pr-8 text-base placeholder-gray-600 border rounded-lg focus: outline-none" 
        hidden={wfsLayers.length == 0 ?true:false} type="text" placeholder="Digite para filtrar" 
        bind:value={textEntered} title="Filtro">
-    {#each wfsLayersFiltered as layer}
+    {#each wfsLayersFiltered as layer, index}
         <!--<WMSCapabilityLayer wmsLayer={layer} capabilitiesUrl= {selectedIDTextIRI.iri}></WMSCapabilityLayer>-->
-        <WFSCapabilityLayer wfsLayer={layer} capabilitiesUrl= {selectedIDTextIRI.iri}></WFSCapabilityLayer>
+        <WFSCapabilityLayer wfsLayer={layer} capabilitiesUrl= {selectedIDTextIRI.iri} id={index} selectedColor={'#FFFFFF'}></WFSCapabilityLayer>
         
     {/each}    
     {:catch error}

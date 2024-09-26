@@ -7,9 +7,14 @@
     import { MetadataURL } from '../ogc_commom/metadataURL';
     import { Fill, Stroke, Style } from 'ol/style';
     import CircleStyle from 'ol/style/Circle';
-  import { onDestroy } from 'svelte';
+    import { onDestroy } from 'svelte';
+    import { onMount } from "svelte";
+  
+
+
     export let wfsLayer = null;
     export let capabilitiesUrl;
+    export let id;
     let source = null;
     let sourceLayer = null;
     let display = '';
@@ -20,6 +25,20 @@
     let removed = [];
     let unsubscribe;
 
+    //Lógica para coletar cor selecionada pelo usuário
+    export let selectedColor = '#FFFFFF'; // Agora é uma propriedade do componente
+    let userColor;
+    let colorInput;
+    let aleatoryColor;
+    
+    function btnSelectColorClicked() {
+        colorInput.click(); // Usa a referência direta ao input
+    }
+
+    
+   
+    /**Fim da lógica de cor selecionada pelo usuário/*/
+ 
     //Criado para que o título do WFS volte a ser renderizado após ser removido do camadas selecionadas 
     //$: console.log("display atual" + display)
     
@@ -130,7 +149,23 @@
     // Mapa de cores para armazenar as cores de cada grupo de feições
     const mapaDeCores = new Map();
 
-    function gerarCorAleatoria() {
+    function hexToRGBA(hex) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        console.log("MEU RGBA" + `rgba(${r}, ${g}, ${b}, 0.7`)
+        return `rgba(${r}, ${g}, ${b}, 0.7)`;
+    }
+
+    function getRandomColor() {
+        const colorInput = userColor;
+
+        if(colorInput){
+
+            return hexToRGBA(colorInput)
+
+        }
+
         const letras = '0123456789ABCDEF';
         let cor = '#';
         for (let i = 0; i < 6; i++) {
@@ -141,15 +176,16 @@
         const r = parseInt(cor.slice(1, 3), 16);
         const g = parseInt(cor.slice(3, 5), 16);
         const b = parseInt(cor.slice(5, 7), 16);
-        const alpha = 0.7; // A transparência deve estar entre 0 e 1 
+        const alpha = 0.7; // A transparência deve estar entre 0 e 1    
+        aleatoryColor = `rgba(${r},${g},${b},${alpha}`
 
         return `rgba(${r},${g},${b},${alpha})`;
     }
 
-    function obterCorParaFeicao(idDoGrupo) {
+    function getColorForFeature(idDoGrupo) {
         if (!mapaDeCores.has(idDoGrupo)) {
 
-            const novaCor = gerarCorAleatoria();
+            const novaCor = getRandomColor();
             // Gera uma nova cor para o grupo se ainda não estiver presente
             //mapaDeCores.set(idDoGrupo, gerarCorAleatoria());
             mapaDeCores.set(idDoGrupo, novaCor);
@@ -159,78 +195,60 @@
         return mapaDeCores.get(idDoGrupo);
     }
 
-    /*
-    function obterEstiloDaFeicao() {
-        return (feicao) => {
-            // Usa o ID da feição ou ID do grupo para determinar a cor
-            const idDoGrupo = feicao.getId();
-            const cor = obterCorParaFeicao(idDoGrupo);
-            
+   
 
+    async function btnAddLayerClicked() {
+        let z_index = $selectedLayers.length + 1;
+        if (!wfsLayer.name()) {
+            return alert("Esta é uma camada de agrupamento. Apenas as camadas interiores podem ser exibidas!");
+        }
+
+        let urlFeature = urlGetFeature();
+        let dados = await fetchDataByType(urlFeature);
+        let dadosJson = await dados.json();
+        console.log("dados json" + JSON.stringify(dadosJson));
+        let geometria = dadosJson.features[0].geometry.type;
+        console.log("GEOMETRIA: " + geometria);
+        
+        
+        // ID para feições do mesmo grupo 
+        const novoIdDoGrupo = Date.now().toString(); 
+    
+        // Criando a cor da feição antes de definir o estilo padronizado
+        color = getColorForFeature(novoIdDoGrupo);
+        console.log("Cor gerada para o grupo: " + color);
+
+        // Adicionando feições com o ID único e a cor gerada
+        let estiloFeicao = (feicao) => {
+            if(geometria === "LineString" || geometria === "MultiLineString"){
+                console.log("A geometria é LineString ou MultilineString")
+                return new Style({
+                    stroke: new Stroke({color: color, width: 2})
+                })
+            }
             return new Style({
                 image: new CircleStyle({
                     radius: 5,
-                    fill: new Fill({color: cor}),
-                    stroke: new Stroke({color: '#000', width: 1})
+                    fill: new Fill({ color: color }), 
+                    stroke: new Stroke({ color: '#000', width: 1 })
                 }),
-                fill: new Fill({color: cor}),
-                stroke: new Stroke({color: '#000', width: 1})
+                fill: new Fill({ color: color }),  
+                stroke: new Stroke({ color: '#000', width: 1 })
             });
         };
+
+        let camada = await $facadeOL.addGeoJSONLayer(dadosJson, estiloFeicao);
+        //let camada = await $facadeOL.addGeoJSONLayer(dadosJson);
+        wfsLayer.color = color;
+        wfsLayer.layer = camada;
+        wfsLayer.feicoes = featureCount;
+        console.log("feicoes" + wfsLayer.feicoes)
+        $selectedLayers = [...$selectedLayers, wfsLayer];
+
+        display = 'hidden';
+       
+
     }
-    */
-   
-    async function btnAddLayerClicked() {
-    let z_index = $selectedLayers.length + 1;
-    if (!wfsLayer.name()) {
-        return alert("Esta é uma camada de agrupamento. Apenas as camadas interiores podem ser exibidas!");
-    }
-
-    let urlFeature = urlGetFeature();
-    let dados = await fetchDataByType(urlFeature);
-    let dadosJson = await dados.json();
-    console.log("dados json" + JSON.stringify(dadosJson));
-    let geometria = dadosJson.features[0].geometry.type;
-    
-    
-    // ID para feições do mesmo grupo 
-    const novoIdDoGrupo = Date.now().toString(); 
-
-    // Criando a cor da feição antes de definir o estilo padronizado
-    color = obterCorParaFeicao(novoIdDoGrupo);
-    console.log("Cor gerada para o grupo: " + color);
-
-    // Adicionando feições com o ID único e a cor gerada
-    let estiloFeicao = (feicao) => {
-        if(geometria === "LineString"){
-            console.log("A geometria é LineString")
-            return new Style({
-                stroke: new Stroke({color: color, width: 1})
-            })
-        }
-        return new Style({
-            image: new CircleStyle({
-                radius: 5,
-                fill: new Fill({ color: color }), 
-                stroke: new Stroke({ color: '#000', width: 1 })
-            }),
-            fill: new Fill({ color: color }),  
-            stroke: new Stroke({ color: '#000', width: 1 })
-        });
-    };
-
-    let camada = await $facadeOL.addGeoJSONLayer(dadosJson, estiloFeicao);
-    //let camada = await $facadeOL.addGeoJSONLayer(dadosJson);
-    wfsLayer.color = color;
-    wfsLayer.layer = camada;
-    wfsLayer.feicoes = featureCount;
-    console.log("feicoes" + wfsLayer.feicoes)
-    $selectedLayers = [...$selectedLayers, wfsLayer];
-
-    display = 'hidden';
-    console.log("DISPLAY BTN SEARCH CLICKED:" + display)
-
-}
     
 
     function btnFilterLayerClicked() {
@@ -241,17 +259,29 @@
 <div class="flex mt-1 relative {display} text-gray-700 ">
     
     {#if featureCount}
-        <p class="flex-grow text-grey-darkest hover:bg-red truncate text-left text-xs" 
+        <p class=" mt-1 flex-grow text-grey-darkest hover:bg-red truncate text-left text-xs" 
         title="{`${wfsLayer.description()} - ${featureCount} ${featureCount > 1 ? 'feições' : 'feição'}`}">
         {`${wfsLayer.description()} - ${featureCount} ${featureCount > 1 ? 'feições' : 'feição'}`}</p>
 
-            <button  class="{visibilyBtnMetadata()} focus:outline-none bg-grey-light hover:bg-grey text-grey-darkest font-bold py-1 px-1 rounded inline-flex items-center hover:bg-gray-200" 
+        <button  class="{visibilyBtnMetadata()} focus:outline-none bg-grey-light hover:bg-grey text-grey-darkest font-bold py-1 px-1 rounded inline-flex items-center hover:bg-gray-200" 
         on:click|preventDefault={btnMetadadoClicked} title="Metadados">
             <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px" class="h-6 w-6" fill="#FCF3CF" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke="#1C2833" stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
         </button>
-        <button class="focus:outline-none bg-grey-light hover:bg-grey text-grey-darkest font-bold py-1 px-1 rounded inline-flex items-center hover:bg-gray-200" on:click|preventDefault={btnAddLayerClicked} title="Adicionar feições">
+
+
+        
+        <input type="color" bind:this={colorInput} bind:value={userColor} style="display: none;" />
+
+        <button class="focus:outline-none bg-grey-light hover:bg-grey text-grey-darkest font-bold py-1 px-1 rounded inline-flex items-center hover:bg-gray-200" on:click|preventDefault={btnSelectColorClicked} title="Selecione a cor das feições a serem renderizadas">
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill={userColor ? userColor+'80' :  aleatoryColor ? aleatoryColor : '#FFFFFF'} viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7h.01m3.486 1.513h.01m-6.978 0h.01M6.99 12H7m9 4h2.706a1.957 1.957 0 0 0 1.883-1.325A9 9 0 1 0 3.043 12.89 9.1 9.1 0 0 0 8.2 20.1a8.62 8.62 0 0 0 3.769.9 2.013 2.013 0 0 0 2.03-2v-.857A2.036 2.036 0 0 1 16 16Z"/>
+            </svg>
+        </button>
+
+      
+        <button class="focus:outline-none bg-grey-light hover:bg-grey text-grey-darkest font-bold py-1 px-1 rounded inline-flex items-center hover:bg-gray-200" on:click|preventDefault={btnAddLayerClicked} title="Adicionar feições" id="addLayer">
             <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px" viewBox="0 0 24 24" fill="#FEF9E7">
                 <path stroke="#1C2833" fill-rule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clip-rule="evenodd" />
             </svg>   
