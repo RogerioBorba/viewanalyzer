@@ -1,13 +1,18 @@
 <script>
   import WfsLayerCard from '$lib/component/wfs/WFSLayerCard.svelte';
   import WmsCapabilityLayer from '$lib/component/wms/WMSCapabilityLayer.svelte';
-    import { selectedLayers,removedLayers } from '$lib/store/storeMap'
+  import { selectedLayers,removedLayers } from '$lib/store/storeMap'
+  import { onMount } from 'svelte';
+  
     export let wmsLayer;
     let hidden ='hidden';
     let linkLegenda = '';
 
   
-
+  onMount( async () => {
+    console.log(`wmsLayer: ${wmsLayer.className}`);
+    alert("sdsdsdsd")
+  })  
 
     function btnClearClicked() {
         if (!wmsLayer)
@@ -43,10 +48,10 @@
     
     $:{
         if(wmsLayer){
-            console.log(wmsLayer)
+            console.log(wmsLayer.className)
         }
     }
-
+    
 </script>
 <div class="flex mt-1 relative text-gray-700">
     <!---<p class="mt-1 flex-grow text-grey-darkest hover:bg-red truncate text-left text-xs" title="{`${wmsLayer.title()} - ${wmsLayer.feicoes} ${wmsLayer.feicoes > 1 ? "feições" : "feição"}`}">{`${wmsLayer.title()} - ${wmsLayer.feicoes} ${wmsLayer.feicoes > 1 ? 'feições' : 'feição'} `}</p>-->

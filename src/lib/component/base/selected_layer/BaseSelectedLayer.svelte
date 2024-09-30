@@ -1,8 +1,6 @@
 <script>
  import {selectedLayers}  from '$lib/store/storeMap'
- import SelectedLayer from './SelectedLayer.svelte'
  import {flip} from 'svelte/animate';
- //import { getMethods } from '$lib/util/reflection';
  let hovering = false;
 
  const drop = (event, target) => {
@@ -49,7 +47,9 @@
     ondragover="return false"
     on:dragenter={() => hovering = index}
     class:is-active={hovering === index}>
-        <SelectedLayer wmsLayer={layer}></SelectedLayer>
+    {#await import(`./Selected${layer.className}.svelte`) then Module}
+                  <Module.default dataLayer={layer} />
+    {/await}
     </div>
 {/each}    
 <style>
