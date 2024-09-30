@@ -1,6 +1,6 @@
 <script>
     
-    import {catalogos_servicos} from '$lib/inde/CatalogoINDE';
+    //import {catalogos_servicos} from '$lib/inde/CatalogoINDE';
     import { getWFSCapabilitiesObject } from './WFSCapabilitiesObject.js';
 
 	import { error } from '@sveltejs/kit';

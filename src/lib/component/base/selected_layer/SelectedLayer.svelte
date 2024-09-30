@@ -49,14 +49,22 @@
 
 </script>
 <div class="flex mt-1 relative text-gray-700">
-    <p class="mt-1 flex-grow text-grey-darkest hover:bg-red truncate text-left text-xs" title="{`${wmsLayer.title()} - ${wmsLayer.feicoes} ${wmsLayer.feicoes > 1 ? "feições" : "feição"}`}">{`${wmsLayer.title()} - ${wmsLayer.feicoes} ${wmsLayer.feicoes > 1 ? 'feições' : 'feição'} `}</p>
+    <!---<p class="mt-1 flex-grow text-grey-darkest hover:bg-red truncate text-left text-xs" title="{`${wmsLayer.title()} - ${wmsLayer.feicoes} ${wmsLayer.feicoes > 1 ? "feições" : "feição"}`}">{`${wmsLayer.title()} - ${wmsLayer.feicoes} ${wmsLayer.feicoes > 1 ? 'feições' : 'feição'} `}</p>-->
     {#if wmsLayer.color}
+        <p class="mt-1 flex-grow text-grey-darkest hover:bg-red truncate text-left text-xs" title="{`${wmsLayer.title()} - ${wmsLayer.feicoes} ${wmsLayer.feicoes > 1 ? "feições" : "feição"}`}">{`${wmsLayer.title()} - ${wmsLayer.feicoes} ${wmsLayer.feicoes > 1 ? 'feições' : 'feição'} `}</p>
         <button class="mb-4 focus:outline-none bg-grey-light hover:bg-grey text-grey-darkest font-bold py-1 px-1 rounded inline-flex items-center hover:bg-gray-200" on:click|preventDefault={btnLegendClicked} title="Cor">
         <svg class="w-5 h-5 text-{wmsLayer.color} dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill={wmsLayer.color} viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7h.01m3.486 1.513h.01m-6.978 0h.01M6.99 12H7m9 4h2.706a1.957 1.957 0 0 0 1.883-1.325A9 9 0 1 0 3.043 12.89 9.1 9.1 0 0 0 8.2 20.1a8.62 8.62 0 0 0 3.769.9 2.013 2.013 0 0 0 2.03-2v-.857A2.036 2.036 0 0 1 16 16Z"/>
           </svg>
                  
         </button> 
+    {:else}
+    <p class="mt-1 flex-grow text-grey-darkest hover:bg-red truncate text-left text-xs" title="{`${wmsLayer.title()}`}">{`${wmsLayer.title()}`}</p>
+        <button class="mb-4 focus:outline-none bg-grey-light hover:bg-grey text-grey-darkest font-bold py-1 px-1 rounded inline-flex items-center hover:bg-gray-200" on:click|preventDefault={btnLegendClicked} title="Legenda">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="cyan" viewBox="0 0 22 22" stroke="currentColor" stroke-width="1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>    
+        </button>  
     {/if}
     
     
@@ -66,11 +74,7 @@
           </svg>
     </button>
     <!--
-    <button class="focus:outline-none bg-grey-light hover:bg-grey text-grey-darkest font-bold py-1 px-1 rounded inline-flex items-center hover:bg-gray-200" on:click|preventDefault={btnLegendClicked} title="Legenda">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="cyan" viewBox="0 0 22 22" stroke="currentColor" stroke-width="1">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>    
-    </button>  
+    
     -->      
 </div>
 <div id="popup-modal" tabindex="-1" class="{hidden} overflow-y-auto overflow-x-hidden relative top-0 right-0 left-40 z-50 md:inset-0 h-modal md:h-full">

@@ -10,3 +10,4 @@ export let currentListWFSCapability = writable([]);
 export let currentListComplexType = writable([]);
 export let currentFeatureTypeElements = writable([]);
 export let currentWFSGetCapabilities = writable('');
+export let currentFeature = writable('');
