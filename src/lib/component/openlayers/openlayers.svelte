@@ -47,7 +47,7 @@
 
 
     function updateMapWithCoordinates(coords) {
-        console.log("coordinates upadas" + JSON.stringify(coords))
+        //console.log("coordinates upadas" + JSON.stringify(coords))
         // Lógica para atualizar o mapa usando coords
         // Exemplo hipotético:
         // facadeOL.getMap().updateCoordinates(coords);
@@ -60,7 +60,7 @@
     // Inscreva-se às coordenadas filtradas
     filteredCoordinate.subscribe(value => {
         coordinates = value;
-        console.log("coordinates", coordinates);
+        //console.log("coordinates", coordinates);
         // Atualize o mapa com as novas coordenadas
         updateMapWithCoordinates(coordinates);
     });
@@ -80,7 +80,7 @@
     )
 
     onMount(async () => {
-        console.log("MONTEI");
+        //console.log("MONTEI");
 
         // Inicialize o OpenLayers se ainda não estiver inicializado
         if ($facadeOL === null) {

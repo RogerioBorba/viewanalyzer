@@ -11,3 +11,4 @@ export let currentListComplexType = writable([]);
 export let currentFeatureTypeElements = writable([]);
 export let currentWFSGetCapabilities = writable('');
 export let currentFeature = writable('');
+export let currentModalLink = writable('');

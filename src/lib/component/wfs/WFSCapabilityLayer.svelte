@@ -10,6 +10,8 @@
     import {getAttributes} from './WFSModalActions';
     import { onDestroy } from 'svelte';
     import { onMount } from "svelte";
+  import WfsModal from './WFSModal.svelte';
+  import { currentModalLink } from '$lib/store/storeWFS';
   
 
 
@@ -31,6 +33,9 @@
     let userColor;
     let colorInput;
     let aleatoryColor;
+
+    //Variáveis modal
+   
     
     function btnSelectColorClicked() {
         colorInput.click(); // Usa a referência direta ao input
@@ -44,12 +49,23 @@
 
     let isOpen = false;
     let attributes = [];
+    let linkToModal;
+    let wfsName;
+    
 
     async function openModal() {
+        //console.log(attributes.length);
         const link= url();
-        let newAttributes = await getAttributes(wfsLayer.name(),link);
-        attributes = [...attributes, newAttributes];
-        isOpen = true;
+        //$currentModalLink = link;
+        //let newAttributes = await getAttributes(wfsLayer.name(),link);
+        //attributes = [...attributes, newAttributes];
+        //console.log(attributes.length)
+        if(link) {
+            isOpen = true;
+            linkToModal = link;
+            wfsName = wfsLayer.name();
+        }
+        
     }
 
     function closeModal(event) {
@@ -256,15 +272,19 @@
         };
 
         let camada = await $facadeOL.addGeoJSONLayer(dadosJson, estiloFeicao);
+        
         //let camada = await $facadeOL.addGeoJSONLayer(dadosJson);
+        wfsLayer.dadosJson = dadosJson;
+        wfsLayer.geometria = geometria;
+        
         wfsLayer.color = color;
         wfsLayer.layer = camada;
         wfsLayer.feicoes = featureCount;
         console.log("feicoes" + wfsLayer.feicoes)
         $selectedLayers = [...$selectedLayers, wfsLayer];
-
         display = 'hidden';
-       
+        userColor = "#FFFFFF"
+        aleatoryColor = "#FFFFFF"
 
     }
     
@@ -327,13 +347,18 @@
     {/if}
 </div>
 
+{#if linkToModal}
+    <WfsModal {isOpen} {wfsName}  link={linkToModal} {closeModal} />
+{/if}
 
 
+<!---
 
 <div id="default-modal" tabindex="-1" aria-hidden={!isOpen} class:hidden={!isOpen} class="flex justify-center items-center overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full h-full max-h-full">
     <div class="relative p-4 w-full max-w-5xl max-h-5xl">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <!-- Modal header -->
+             <!--
             <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                     Filtrar Feições
@@ -344,14 +369,16 @@
                     </svg>
                     <span class="sr-only">Close modal</span>
                 </button>
-            </div>
+            </div>--->
             <!-- Modal body -->
+             <!--
             <div class="p-4 space-y-4">
                 {#each attributes as attribute}
                     <p>{attribute}</p>
                 {/each}
-            </div>
+            </div>--->
             <!-- Modal footer -->
+             <!--
             <div class="flex items-center p-4 border-t border-gray-200 rounded-b dark:border-gray-600">
                 <button on:click={closeModal} class="bg-blue-700 text-white px-5 py-2.5 rounded-lg">I accept</button>
                 <button on:click={closeModal} class="bg-white text-gray-900 px-5 py-2.5 ms-3 rounded-lg border hover:bg-gray-100">Decline</button>
@@ -359,3 +386,4 @@
         </div>
     </div>
 </div>
+-->

@@ -23,7 +23,7 @@ export async function getAttributes(wfsLayerName, urlBase) {
         let dataJson = await data.json();
         console.log("DATA JSON: " + JSON.stringify(dataJson))
         let attributes = dataJson["featureTypes"].map(element => element["properties"].map(property => property["name"])).flat();
-        console.log(JSON.stringify(attributes))
+        console.log(attributes);
         return attributes;
 
         /*let z_index = $selectedLayers.length + 1;
