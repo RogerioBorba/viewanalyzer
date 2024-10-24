@@ -22,6 +22,7 @@
     let search = '';
     let consulta = ''
     let count = 1000;
+    let selectedRow = null
 
     //resultado das propriedades
     let propiertiesResult = [];
@@ -175,6 +176,14 @@
             currentPage = page;
         }
     }
+
+    function selectRow(index) {
+        if (selectedRow === index) {
+            selectedRow = null; 
+        } else {
+            selectedRow = index; 
+        }
+    }
 </script>
 
 {#if isOpen}
@@ -258,8 +267,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {#each paginatedData as row}
-                                        <tr class="border-b border-gray-200 dark:border-gray-700">
+                                    {#each paginatedData as row,index}
+                                        <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-blue-200" class:bg-blue-200={selectedRow === index} on:click={() => selectRow(index)}>
                                             {#each row as cel}
                                                 <td class="whitespace-nowrap px-2 py-2 text-center text-black">
                                                     {cel} 
