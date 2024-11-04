@@ -207,7 +207,7 @@ export class FacadeOL {
      // Begin - events
      addOverlay() {
       if (browser) {
-        const container = document.getElementById('popup');
+        const container = document.getElementById('static-modal');
         const content = document.getElementById('popup-content');
         const closer = document.getElementById('popup-closer');
         const overlay = new Overlay({
@@ -218,7 +218,23 @@ export class FacadeOL {
             },
           },
         });
-        this.map.addOverlay(overlay);
+
+        this.popup = new Overlay({
+          element: container,
+          autoPan: true,
+          autoPanAnimation: { duration: 250 }
+        });
+
+        if(closer)
+          closer.onclick = () => {
+            this.popup.setPosition(undefined);
+            closer.blur();
+            container.style.display = 'none'; // Esconde o popup
+            return false;
+          };
+
+        this.map.addOverlay(this.popup);
+        //this.map.addOverlay(overlay);
       }
     }
 
@@ -240,7 +256,7 @@ export class FacadeOL {
           let key = entry[0];
           let value = entry[1];
           if(typeof(value) === 'string'){
-            str += '<p>' + key + ': ' + value + '</p>'    
+            str += '<p>' + '<strong>' + key + '</strong>' + ': ' + value + '</p>'    
           }
           console.log(str);
           /*
@@ -250,6 +266,14 @@ export class FacadeOL {
           */
         })
         
+        const contentHTML = `<div>${str}</div>`;
+        //const contentHTML = '<div><h2>Coordinates</h2><p>' + prettyCoord + '</p>' + str + '</div>';
+        const container = document.getElementById('popup-content');
+        container.innerHTML = contentHTML;
+
+        this.popup.setPosition(evt.coordinate);
+        const popupElement = document.getElementById('static-modal');
+        popupElement.style.display = 'block';
        // this.popup.show(evt.coordinate, '<div><h2>Coordinates</h2><p>' + prettyCoord + '</p>' + str + '</div>')
       } //else
         //this.popup.show(evt.coordinate, '<div><h2>Coordinates</h2><p>' + prettyCoord + '</p></div>')
