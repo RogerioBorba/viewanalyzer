@@ -7,3 +7,7 @@ export let clickedButtonOnWMS = writable(false);
 export let drawWasClickedOnWMS = writable(false);
 export let drawWasClickedOnWFS = writable(false);
 export let drawWasClicked = writable(false);
+
+
+//Desenho e get de dados para comparação
+export let hiddenDraw = writable('hidden');

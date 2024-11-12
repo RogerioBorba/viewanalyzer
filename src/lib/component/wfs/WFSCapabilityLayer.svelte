@@ -10,8 +10,9 @@
     import {getAttributes} from './WFSModalActions';
     import { onDestroy } from 'svelte';
     import { onMount } from "svelte";
-  import WfsModal from './WFSModal.svelte';
-  import { currentModalLink } from '$lib/store/storeWFS';
+    import WfsModal from './WFSModal.svelte';
+    import { currentModalLink } from '$lib/store/storeWFS';
+    import {hiddenDraw} from '$lib/store/storeBoudingBox';
   
 
 
@@ -35,7 +36,9 @@
     let aleatoryColor;
 
     //Variáveis modal
-   
+    onDestroy(async () => {
+        $hiddenDraw = 'hidden';
+    })
     
     function btnSelectColorClicked() {
         colorInput.click(); // Usa a referência direta ao input
@@ -286,6 +289,8 @@
         userColor = "#FFFFFF"
         aleatoryColor = "#FFFFFF"
 
+
+        $hiddenDraw = '';
     }
     
 
