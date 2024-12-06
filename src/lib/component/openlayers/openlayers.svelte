@@ -157,6 +157,7 @@
     function handleDrawButtonClick() {
         isDrawingEnabled = !isDrawingEnabled;
         console.log("is Drawing enabled" +isDrawingEnabled)
+    
         if(isDrawingEnabled){
             enableDrawInteraction();
            
@@ -165,6 +166,13 @@
             disableDrawInteraction();
         }
         
+    }
+
+
+    function espatialDrawButtonClick() {
+        isDrawingEnabled = !isDrawingEnabled;
+        console.log("is Drawing enabled" +isDrawingEnabled)
+        enableDrawInteraction();
     }
 
   
@@ -199,7 +207,18 @@
     //ativar o desenho para wfs selecionado
     drawWasClickedOnWFS.subscribe(value => {
         if(value === true){
-            handleDrawButtonClick()
+            espatialDrawButtonClick()
+        }
+        else{
+            disableDrawInteraction();
+        }}
+    )
+
+    drawWasClickedOnWMS.subscribe(value => {
+        if(value === true){
+            espatialDrawButtonClick();
+        }else{
+            disableDrawInteraction();
         }}
     )
 

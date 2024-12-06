@@ -43,10 +43,17 @@
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 seconds timeout:
 
+    
+    const params = new URLSearchParams(window.location.search);
+    link = params.get('link');
+    
+    console.log('Link recebido:', link);
+    
+    /*
     const unsubscribe = metadataLink.subscribe(element => {
       link = element;
     })
-    
+    */
     
     if (link.includes('outputschema=http%3A%2F%2Fwww.w3.org%2F2005%2FAtom')) {
     // Substitui "outputschema=http://www.w3.org/2005/Atom" por "outputschema=http://www.isotc211.org/2005/gmd"

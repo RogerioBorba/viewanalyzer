@@ -2,6 +2,7 @@
 <script context="module">
 	import {metadataLink} from '$lib/store/storeVisualizadorMetadata'
 	
+	
 	// retain module scoped expansion state for each tree node
 	const _expansionState = {
 		/* treeNodeId: expanded <boolean> */
@@ -10,15 +11,15 @@
 	
 </script>
 <script>
-  import { goto } from '$app/navigation';
-
-	import {facadeOL, selectedLayers } from '$lib/store/storeMap';
+  	import { goto } from '$app/navigation';
+	import {facadeOL, selectedLayers, removedLayers} from '$lib/store/storeMap';
 	
 	import { WMSLayer } from "./WMSLayer";
 //	import { slide } from 'svelte/transition';
 	export let wmsLayer;
     export let onClick = null;
     export let capabilitiesUrl;
+	let removed = [];
 	let expanded = false;
     let display = '';
 	let children = wmsLayer.layers();
@@ -64,8 +65,8 @@
     }
 	async function btnMetadadoClicked() {
 
-		console.log(JSON.stringify(wmsLayer))
-		console.log("Geographic Bounding box" + JSON.stringify(wmsLayer.exGeographicBoundingBox()))
+		//console.log(JSON.stringify(wmsLayer))
+		//console.log("Geographic Bounding box" + JSON.stringify(wmsLayer.exGeographicBoundingBox()))
 
         if (!wmsLayer.metadataURLs())
             return alert("A camada não está associada a metadados.")
@@ -79,7 +80,8 @@
 				window.open(link, "_blank");
 			}else{
 				$metadataLink = link;
-				goto("/visualizador/metadata")
+				//goto("/visualizador/metadata")
+				window.open(`/visualizador/metadata?link=${encodeURIComponent(link)}`, '_blank');
 			}
 		});     
         
@@ -91,6 +93,21 @@
 	function visibilyBtnMetadata() {
 		return (wmsLayer.metadataURLs())?'visiable':'invisible';
 	}
+
+
+	//lógica para voltar com os itens que sairam da lista e foram para a área de camadas selecionadas
+	$: if($removedLayers){
+        removed = $removedLayers;
+        
+        removed.forEach(element => {
+            if (element.oid === wmsLayer.oid) {
+               display = '';
+            }
+            removed = removed.filter(el => el.oid !== wmsLayer.oid);
+            $removedLayers = removed; 
+        });
+	}
+
 	
 </script>
 <div class="flex {display}">

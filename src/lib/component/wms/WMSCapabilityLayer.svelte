@@ -33,7 +33,8 @@
 				window.open(link, "_blank");
 			}else{
 				$metadataLink = link;
-				goto("/visualizador/metadata")
+				//goto("/visualizador/metadata")
+                window.open(`/visualizador/metadata?link=${encodeURIComponent(link)}`, '_blank');
 			}
 		});          
     }
