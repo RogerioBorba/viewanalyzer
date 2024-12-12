@@ -28,6 +28,7 @@
 		"html2pdf.js": "^0.10.1",
 		"jspdf": "^2.5.1",
 		"ol": "^8.0.0",
+		"proj4": "^2.15.0",
 		"spectrum-colorpicker2": "^2.0.10",
 		"undici": "^5.23.0",
 		"xmldom": "^0.6.0"

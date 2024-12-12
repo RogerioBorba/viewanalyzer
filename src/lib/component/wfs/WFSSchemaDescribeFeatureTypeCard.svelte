@@ -47,7 +47,9 @@
     function linkClicked() {
         //currentListComplexType.set(complexArray)
         currentFeatureTypeElements.set(featureTypeElements)
+        console.log("FEATURE ELEMENTS :" + JSON.stringify(featureTypeElements))
         currentWFSGetCapabilities.set(objIdDescricaoIri.iri)
+        console.log("OBJ DESCRICAO IRI " + objIdDescricaoIri.ir)
         goto("/wfs/tipo-de-feicoes/schema-feature-type")
     }
 </script>

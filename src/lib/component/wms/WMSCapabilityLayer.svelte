@@ -53,6 +53,8 @@
         wmsLayer.sourceLayer = url();
         console.log("source: ",wmsLayer );
         $facadeOL.addWMSLayer(wmsLayer);
+
+
         $selectedLayers = [...$selectedLayers, wmsLayer];
         display='hidden';
     }

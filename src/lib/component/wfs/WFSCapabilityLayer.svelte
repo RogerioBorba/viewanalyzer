@@ -13,19 +13,20 @@
     import WfsModal from './WFSModal.svelte';
     import { currentModalLink } from '$lib/store/storeWFS';
     import {hiddenDraw} from '$lib/store/storeBoudingBox';
-  
+    import proj4 from 'proj4'
 
 
     export let wfsLayer = null;
     export let capabilitiesUrl;
     export let id;
+
     let source = null;
     let sourceLayer = null;
     let display = '';
     let visibilytMetadata ='visible'
     let featureCount = null;
     let color ;
-
+    let loading = false;
     let removed = [];
     let unsubscribe;
 
@@ -47,6 +48,8 @@
     
    
     /**Fim da lógica de cor selecionada pelo usuário/*/
+
+
     
     /**Lógica para o modal exibir as ações*/
 
@@ -235,8 +238,18 @@
     }
 
    
+    function isUTM(coord) {
+    // Para a zona UTM 32723, as coordenadas X (leste-oeste) normalmente estão em torno de 350000 metros ou mais
+        const x = coord[0]; // Coordenada X (leste-oeste)
+        const y = coord[1]; // Coordenada Y (norte-sul)
 
+        console.log("x: " + x + "e " + "y :" + y )
+        // Considera-se que se a coordenada X for maior que 100000 e Y maior que 100000, provavelmente está em UTM
+        return x > 100000 && y > 100000;
+}
+    
     async function btnAddLayerClicked() {
+        loading = true;
         let z_index = $selectedLayers.length + 1;
         if (!wfsLayer.name()) {
             return alert("Esta é uma camada de agrupamento. Apenas as camadas interiores podem ser exibidas!");
@@ -246,8 +259,35 @@
         let dados = await fetchDataByType(urlFeature);
         let dadosJson = await dados.json();
         console.log("dados json" + JSON.stringify(dadosJson));
+
+
+        // Testando a conversão das coordenadas
+        dadosJson.features.forEach(feature => {
+            feature.geometry.coordinates = feature.geometry.coordinates.map(coord => {
+            if (Array.isArray(coord[0])) {
+                return coord.map(c => {
+                    if (isUTM(c)) {
+                        const [longitude, latitude] = proj4('EPSG:32723', 'EPSG:4326', [c[0], c[1]]);
+                        return [longitude, latitude];
+                    } else {
+                        return c;
+                    }
+                });
+            } else {
+                // Para coordenadas individuais (não um conjunto de pares)
+                if (isUTM(coord)) {
+                    const [longitude, latitude] = proj4('EPSG:32723', 'EPSG:4326', [coord[0], coord[1]]);
+                    return [longitude, latitude];
+                } else {
+                    return coord;
+                }
+            }
+        });
+    
+            
+        });
+       
         let geometria = dadosJson.features[0].geometry.type;
-        console.log("GEOMETRIA: " + geometria);
         
         
         // ID para feições do mesmo grupo 
@@ -257,26 +297,61 @@
         color = getColorForFeature(novoIdDoGrupo);
         console.log("Cor gerada para o grupo: " + color);
 
-        // Adicionando feições com o ID único e a cor gerada
+
         let estiloFeicao = (feicao) => {
-            if(geometria === "LineString" || geometria === "MultiLineString"){
-                console.log("A geometria é LineString ou MultilineString")
+            if (geometria === "LineString" || geometria === "MultiLineString") {
                 return new Style({
-                    stroke: new Stroke({color: color, width: 2})
-                })
+                    stroke: new Stroke({
+                        color: color,
+                        width: 4,
+                    }),
+                });
+            } else if (geometria === "Polygon" || geometria === "MultiPolygon") {
+                return new Style({
+                    stroke: new Stroke({
+                        color: color,
+                        width: 2,
+                    }),
+                    fill: new Fill({
+                        color: 'rgba(0, 0, 255, 0.1)', 
+                    }),
+                });
             }
+
             return new Style({
                 image: new CircleStyle({
                     radius: 5,
-                    fill: new Fill({ color: color }), 
-                    stroke: new Stroke({ color: '#000', width: 1 })
+                    fill: new Fill({
+                        color: color,
+                    }),
+                    stroke: new Stroke({
+                        color: '#000',
+                        width: 1,
+                    }),
                 }),
-                fill: new Fill({ color: color }),  
-                stroke: new Stroke({ color: '#000', width: 1 })
+                fill: new Fill({
+                    color: color,
+                }),
+                stroke: new Stroke({
+                    color: '#000',
+                    width: 1,
+                }),
             });
         };
-
+        
         let camada = await $facadeOL.addGeoJSONLayer(dadosJson, estiloFeicao);
+
+        // Obtendo a extensão (bounding box) das feições adicionadas
+        
+        const extent = camada.getSource().getExtent();
+
+        // Ajustando o mapa para centralizar e fazer zoom na extensão das feições
+        $facadeOL.map.getView().fit(extent, { 
+            size: $facadeOL.map.getSize(), 
+            padding: [50, 50, 50, 50], // Padding para ajustar margens
+            maxZoom: 18 // Define um zoom máximo
+        });
+        
         
         //let camada = await $facadeOL.addGeoJSONLayer(dadosJson);
         wfsLayer.dadosJson = dadosJson;
@@ -285,7 +360,6 @@
         wfsLayer.color = color;
         wfsLayer.layer = camada;
         wfsLayer.feicoes = featureCount;
-        console.log("feicoes" + wfsLayer.feicoes)
         $selectedLayers = [...$selectedLayers, wfsLayer];
         display = 'hidden';
         userColor = "#FFFFFF"
@@ -293,6 +367,7 @@
 
 
         $hiddenDraw = '';
+        loading = false;
     }
     
 
@@ -325,12 +400,22 @@
             </svg>
         </button>
 
-      
-        <button class="focus:outline-none bg-grey-light hover:bg-grey text-grey-darkest font-bold py-1 px-1 rounded inline-flex items-center hover:bg-gray-200" on:click|preventDefault={btnAddLayerClicked} title="Adicionar feições" id="addLayer">
-            <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px" viewBox="0 0 24 24" fill="#FEF9E7">
-                <path stroke="#1C2833" fill-rule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clip-rule="evenodd" />
-            </svg>   
-        </button>
+        {#if loading}
+            <div  role="status">
+                <svg aria-hidden="true" class="inline w-5 h-5 mb-2 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                </svg>
+                <span class="sr-only">Loading...</span>
+            </div>
+        {:else}
+            <button class="focus:outline-none bg-grey-light hover:bg-grey text-grey-darkest font-bold py-1 px-1 rounded inline-flex items-center hover:bg-gray-200" on:click|preventDefault={btnAddLayerClicked} title="Adicionar feições" id="addLayer">
+                <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px" viewBox="0 0 24 24" fill="#FEF9E7">
+                    <path stroke="#1C2833" fill-rule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clip-rule="evenodd" />
+                </svg>   
+            </button>
+        {/if}
+
         <button class="focus:outline-none bg-grey-light hover:bg-grey text-grey-darkest font-bold py-1 px-1 rounded inline-flex items-center hover:bg-gray-200" 
         on:click|preventDefault={openModal} title="Filtrar feições">
             <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px" viewBox="0 0 24 24" fill="#FFCC80">

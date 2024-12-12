@@ -60,6 +60,10 @@
             return alert("Esta é uma camada de agrupamento. Apenas as camadas interiores podem ser exibidas!")
 		wmsLayer.sourceLayer = url();
 		$facadeOL.addWMSLayerFromCapability(wmsLayer);
+		
+
+
+
         $selectedLayers = [...$selectedLayers, wmsLayer];
         display='hidden'
     }

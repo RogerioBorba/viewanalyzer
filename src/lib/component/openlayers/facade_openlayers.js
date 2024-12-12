@@ -169,6 +169,7 @@ export class FacadeOL {
     }
     // End - These operations above are related to the WMS
     // Begin - Base operations to add GeoJson
+    
     async addGeoJSONLayer(geojson, style = null) {
       const geo_json = new GeoJSON();
       //const gjson_format = geo_json.readFeatures(geojson, {featureProjection: this.map.getView().getProjection()});
@@ -188,7 +189,8 @@ export class FacadeOL {
       
     }
     
-      
+
+   
     
     addWFSLayerFromCapability(wfsLayer) {
       this.map.addLayer(vectorLayer);

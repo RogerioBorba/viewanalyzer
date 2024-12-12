@@ -108,6 +108,7 @@
         return names
     }
 
+    /*
     function createSublists(inputList, maxElements = 100) {
         const sublists = [];
         for (let i = 0; i < inputList.length; i += maxElements) {
@@ -115,12 +116,13 @@
         }
         return sublists;
     }
-
+    */
     function urlDescribeFeatureType(listaDeNome) {
 
         const partes_url = $currentWFSGetCapabilities.split('?');
         const parteAntesDaInterrogacao = partes_url[0];
         return decodeURI(`${parteAntesDaInterrogacao}?service=wfs&version=2.0.0&request=DescribeFeatureType&typeNames=${listaDeNome.toString()}`)
+        //return decodeURI(`https://sigamapa.santoandre.sp.gov.br/geoserver/siga/ows?service=wfs&version=2.0.0&request=DescribeFeatureType&typeNames=siga:SIGA_SEG_BOMBEIRO_AGRUPAM`)
     }
 
     async function fetch_xml(url) {
@@ -136,6 +138,8 @@
         if (progress_value > 100)  progress_value = 100
     }
 
+
+    /*
     onMount( async () => {
         try {
             const listaDeListaDeNome = createSublists(featureNameList())
@@ -150,7 +154,6 @@
                 updateProgress()
                 listaComplexType = listaComplexType.concat(arrCompleType)
                 originalListaComplexType = listaComplexType;
-                
             }            
         } catch (error) {
             progress_value = 100
@@ -165,6 +168,54 @@
         }
         
     });
+    */
+
+    function createSublists(inputList, maxElements = 10) {
+    const sublists = [];
+    for (let i = 0; i < inputList.length; i += maxElements) {
+        sublists.push(inputList.slice(i, i + maxElements));
+    }
+    return sublists;
+}
+
+async function fetchAllDescribeFeatureTypes(featureNames) {
+    const sublists = createSublists(featureNames);
+    const results = [];
+
+    for (let sublist of sublists) {
+        const url = urlDescribeFeatureType(sublist);
+        updateProgress();
+        try {
+            const xml_text = await fetch_xml(url);
+            const arrCompleType = await complexTypeList(xml_text);
+            results.push(...arrCompleType); 
+            
+        } catch (error) {
+            console.error("Erro ao buscar os tipos de feição: ", error);
+        }
+    }
+
+    return results;
+}
+
+onMount( async () => {
+    try {
+        const featureNames = featureNameList();
+        progress_bin = parseFloat((100 / featureNames.length).toFixed(2));
+        
+        listaComplexType = await fetchAllDescribeFeatureTypes(featureNames);
+        originalListaComplexType = listaComplexType;
+        progress_value = 100;
+        progress_status = 'Processamento Concluído';
+    } catch (error) {
+        progress_value = 100;
+        progress_blink = '';
+        progress_status = 'Erro durante processamento.';
+        progress_color = 'text-red-500';
+    } finally {
+        if (progress_color !== 'text-red-500') progress_color = 'text-blue-700';
+    }
+});
 
 </script>
 <Navbar>
