@@ -2,7 +2,7 @@
     import {countTotalLayer, countTotalLayerWithoutMetadata, countWMSProcessado} from '$lib/store/storeWMS'
     import Navbar from '$lib/component/base/navbar.svelte'
     import WMSCatalogCard from '$lib/component/wms/WMSCatalogCard.svelte';
-  import { onMount } from 'svelte';
+    import { onMount } from 'svelte';
     
     let selectedItems = [] // {id: number, descricao: string, iri: string}[];
     let selectedCatalogs = []
@@ -15,7 +15,12 @@
     $: qtdCatalog = selectedItems.length
     $:  disableButtonAddNewCatalog = (nameCatalog.length == 0 || adressCatalog.length == 0)? true: false
     
-    
+    function resetStores() {
+        $countTotalLayer = 0;
+        $countTotalLayerWithoutMetadata = 0; 
+        $countWMSProcessado = 0;
+
+    }
     const newObjIdDescricaoIRI = (obj) => {
         return { id: i++, descricao: obj.descricao, iri: obj.wmsGetCapabilities}
     }      
@@ -49,6 +54,7 @@
 
     onMount(async() => {
         try{
+            resetStores()
             const response = await fetch("/api/inde/catalogos-servicos")
             const data = await response.json();
             objIdDescricaoIRIArray = data.map(newObjIdDescricaoIRI);

@@ -3,7 +3,7 @@
     import {countTotalLayerWFS, countTotalLayerWithoutMetadataWFS, countWFSProcessado} from '$lib/store/storeWFS'
     import Navbar from '$lib/component/base/navbar.svelte'
     import WFSCatalogCard from '$lib/component/wfs/WFSCatalogCard.svelte';
-  import { onMount } from 'svelte';
+     import { onMount } from 'svelte';
     
     let selectedItems = [] // {id: number, descricao: string, iri: string}[];
     let selectedCatalogs = []
@@ -42,7 +42,12 @@
         }
         checked = !checked
     }
-    
+    function resetStore() {
+        $countTotalLayerWFS = 0; 
+        $countTotalLayerWithoutMetadataWFS = 0;
+        $countWFSProcessado = 0;
+
+    }
     async function btnSearchClicked() {
         if (selectedItems.length == 0)
             return alert( 'Escolha pelo menos uma instituição')
@@ -53,6 +58,7 @@
     
     onMount(async() => {
         try{
+            resetStore()
             const response = await fetch("/api/inde/catalogos-servicos")
             const data = await response.json();
             objIdDescricaoIRIArray = data.map((obj) => newObjIdDescricaoIRI(obj)).filter((obj)=> obj != null );;

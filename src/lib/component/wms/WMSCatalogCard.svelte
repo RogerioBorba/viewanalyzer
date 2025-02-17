@@ -20,6 +20,7 @@
     let spinHidden = '';
     let spinMessage = 'processando ...';
     let requestGetRecordsTextOrError = '';
+    let showMaisDetalhesHidden = '' 
     
     function linkClicked() {
         currentListWMSCapability.set(wmsCapabilities)
@@ -60,10 +61,11 @@
         } catch (error) {
             console.log("Erro na chamada da requisição")
             console.log(error, error.statusText, error.status)
-            requestGetRecordsTextOrError = `ERRO na requisição. ${error.status} - ${error.statusText}. Contate o responsável.`
+            requestGetRecordsTextOrError = `ERRO na requisição:  ${objIdDescricaoIri.iri} . ${error.status} - ${error.statusText}. Contate o responsável.`
             bgColor =  'bg-red-200'
             spinHidden = 'hidden'
-            spinMessage = 'processado com erro'
+            spinMessage = `processado com erro`
+            showMaisDetalhesHidden = 'hidden'
             $countWMSProcessado = $countWMSProcessado + 1
         }
 		
@@ -78,10 +80,12 @@
         <h2> Qtd de camadas sem metadado associado: {qtdCamadaSemMetadadosAssociado}</h2>
         <h2> Qtd de camadas sem palavras chaves: {qtdCamadaSemPalavraChave}</h2>
 
-        <button class="text-green-600 text-left font-semibold hover:bg-gray-200 hover:underline py-1"  on:click={linkClicked}>Mais detalhes</button>
+        <button class="{showMaisDetalhesHidden} text-green-600 text-left font-semibold hover:bg-gray-200 hover:underline py-1"  
+        on:click={linkClicked}>Mais detalhes</button>
         <!--<a class="text-xs text-blue-500 underline underline-offset-4 uppercase" href="{metadadoAssociado()}">{metadadoText}</a>-->
         <div class="bg-slate-300 text-slate-600 rounded-md text-center p-1">
             <Spinner class="{spinHidden} mr-3" size="4" color="white" />
             {spinMessage}
+            
         </div>
 </div>

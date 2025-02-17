@@ -26,7 +26,12 @@
         
         return { id: i++, descricao: obj.descricao, iri: wcsNewLink}
     }
+    function resetStore() {
+        $countTotalLayer = 0; 
+        $countTotalLayerWithoutMetadata = 0;
+        $countWCSProcessado = 0;
 
+    }
 
     let objIdDescricaoIRIArray = [];
     
@@ -64,6 +69,7 @@
    
     onMount(async() => {
             try{
+                resetStore()
                 const response = await fetch("/api/inde/catalogos-servicos")
                 const data = await response.json();
                 objIdDescricaoIRIArray = data.filter((obj) => obj.wcsGetCapabilities !== null)
